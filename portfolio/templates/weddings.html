@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+
+<section class="relative w-full overflow-hidden h-[30vh] sm:h-[35vh] md:h-[43vh]">
+{% load static %}
+  <img
+    src="{% static 'images/weddings.jpg' %}"
+    class="w-full h-full object-cover"
+  />
+
+  <div class="absolute inset-0 bg-black/50"></div>
+
+  <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+
+    <h1 class="text-white text-2xl sm:text-3xl md:text-4xl font-light">
+      Photography that feels real.
+    </h1>
+
+    <p class="text-white/70 mt-2 text-xs sm:text-sm md:text-base">
+      Portrait • Weddings • Love Stories
+    </p>
+
+    <a href="/booking"
+       class="mt-4 px-6 py-2.5 bg-white text-black rounded-full text-sm">
+      Book a session
+    </a>
+
+  </div>
+
+</section>
+<div class="max-w-6xl mx-auto py-10 px-4">
+
+  <h1 class="text-4xl mb-10">Gallery</h1>
+
+  <div class="grid md:grid-cols-3 gap-4">
+    {% for photo in photos %}
+      <img src="{{ photo.image.url }}"
+           class="rounded-xl hover:scale-105 transition duration-300">
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
