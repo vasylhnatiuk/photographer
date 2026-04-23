@@ -1,118 +1,200 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>{% block title %}Photographer{% endblock %}</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Vasyl Hnatiuk — Photographer{% endblock %}</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
     body {
       font-family: 'Libre Baskerville', serif;
-      font-size: 18px;
-      line-height: 1.8;
+      margin: 0;
       background: #fff;
       color: #111;
     }
 
-    /* 🔥 mobile readability */
-    @media (max-width: 768px) {
-      body {
-        font-size: 19px;
-        line-height: 1.9;
-      }
-    }
-
-    .logo-font {
-      font-size: 34px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: white;
-    }
-
+    /* ── HEADER ── */
     #site-header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      z-index: 50;
-      background: transparent;
-      transition: background 0.25s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      /* subtle gradient so white text stays readable over any hero */
+      background: linear-gradient(to bottom, rgba(0,0,0,.45) 0%, transparent 100%);
     }
 
-    .scrolled {
-      background: rgba(0, 0, 0, 0.85);
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: #fff;
+      text-decoration: none;
+      white-space: nowrap;
     }
 
-    #site-header a,
-    #site-header button {
-      color: white;
-      font-size: 18px;
+    /* desktop nav */
+    #desktop-nav a {
+      color: rgba(255,255,255,.85);
+      text-decoration: none;
+      font-size: 1rem;
+      letter-spacing: .03em;
+      transition: color .2s;
+    }
+    #desktop-nav a:hover { color: #fff; }
+
+    /* hamburger */
+    #menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    #menu-btn span {
+      display: block;
+      width: 26px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform .3s, opacity .3s;
+    }
+
+    /* ── MOBILE OVERLAY ── */
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+    #mobile-menu.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #mobile-menu a {
+      color: rgba(255,255,255,.88);
+      text-decoration: none;
+      font-size: 1.75rem;
+      letter-spacing: .04em;
+      transition: color .2s;
+    }
+    #mobile-menu a:hover { color: #fff; }
+
+    #close-menu {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
     }
   </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<header id="site-header" class="px-6 py-5 flex justify-between items-center">
+  <!-- ── HEADER ── -->
+  <header id="site-header">
 
-  <h1 class="logo-font">Vasyl Hnatiuk</h1>
+    <a href="/" class="logo">Vasyl Hnatiuk</a>
 
-  <nav class="hidden md:flex space-x-10">
+    <!-- desktop nav -->
+    <nav id="desktop-nav" class="hidden lg:flex items-center gap-10">
+      <a href="/">Home</a>
+      <a href="/booking/">Booking</a>
+      <a href="/about/">About</a>
+    </nav>
+
+    <!-- hamburger (mobile only) -->
+    <button id="menu-btn" class="lg:hidden" aria-label="Open menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </header>
+
+  <!-- ── MOBILE OVERLAY ── -->
+  <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation">
+
+    <button id="close-menu" aria-label="Close menu">✕</button>
+
     <a href="/">Home</a>
     <a href="/gallery/">Gallery</a>
     <a href="/albums/">Albums</a>
     <a href="/booking/">Booking</a>
     <a href="/about/">About</a>
-  </nav>
 
-  <button id="menu-btn" class="md:hidden text-3xl">☰</button>
+  </div>
 
-</header>
+  <!-- ── PAGE CONTENT ── -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
 
-{% block hero %}{% endblock %}
+  <!-- ── SCRIPTS ── -->
+  <script>
+    const mobileMenu = document.getElementById('mobile-menu');
+    const openBtn    = document.getElementById('menu-btn');
+    const closeBtn   = document.getElementById('close-menu');
 
-<!-- MOBILE MENU -->
-<div id="mobile-menu"
-     class="hidden md:hidden flex flex-col space-y-5 px-6 py-5 bg-black text-white text-lg">
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
 
-  <a href="/">Home</a>
-  <a href="/gallery/">Gallery</a>
-  <a href="/albums/">Albums</a>
-  <a href="/booking/">Booking</a>
-  <a href="/about/">About</a>
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
 
-</div>
+    openBtn.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
 
-<!-- CONTENT -->
-<main class="pt-0">
-  {% block content %}{% endblock %}
-</main>
+    // ESC key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeMenu();
+    });
 
-<!-- FOOTER -->
-<footer class="border-t border-black/10 py-14 text-center text-gray-500 text-sm">
-  <p>© 2026 Vasyl Hnatiuk</p>
-</footer>
+    // tap on backdrop (not on a link)
+    mobileMenu.addEventListener('click', e => {
+      if (e.target === mobileMenu) closeMenu();
+    });
 
-<script>
-  const header = document.getElementById('site-header');
-  const btn = document.getElementById('menu-btn');
-  const menu = document.getElementById('mobile-menu');
-
-  btn.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-  });
-
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 20);
-  });
-</script>
+    // tap any link → close
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  </script>
 
 </body>
 </html>

@@ -1,32 +1,43 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Home — Vasyl Hnatiuk{% endblock %}
 
 {% block content %}
 
-<!-- HERO -->
-<section class="relative w-full overflow-hidden h-[35vh] sm:h-[45vh] md:h-[40vh]">
+<!-- ════════════════════════════════
+     HERO (CINEMATIC)
+════════════════════════════════ -->
+<section class="relative w-full h-[75vh] md:h-[90vh] overflow-hidden">
 
   <img
     src="{% static 'images/main.jpg' %}"
-    class="w-full h-full object-cover"
+    class="absolute inset-0 w-full h-full object-cover scale-105"
+    alt="Hero"
   />
 
-  <div class="absolute inset-0 bg-black/50"></div>
+  <!-- dark cinematic gradient -->
+  <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70"></div>
 
-  <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+  <!-- centered content -->
+  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
 
-    <h1 class="text-white text-3xl sm:text-4xl md:text-6xl font-light leading-snug">
-      Photography that feels real.
-    </h1>
-
-    <p class="text-white/70 mt-4 text-base sm:text-lg md:text-xl">
-      Portrait • Weddings • Love Stories
+    <p class="text-white/70 tracking-[0.3em] uppercase text-xs md:text-sm">
+      Photographer based in NYC
     </p>
 
-    <a href="/booking"
-       class="mt-6 px-7 py-3 bg-white text-black rounded-full text-base sm:text-lg">
+    <h1 class="mt-4 text-white font-light leading-tight
+               text-4xl sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
+      Capturing moments that feel like cinema
+    </h1>
+
+    <p class="mt-6 text-white/70 max-w-xl text-base md:text-lg">
+      Weddings, portraits & emotional storytelling through natural light.
+    </p>
+
+    <a href="/booking/"
+       class="mt-8 px-8 py-3 bg-white text-black rounded-full
+              text-base md:text-lg hover:bg-white/90 transition">
       Book a session
     </a>
 
@@ -34,59 +45,60 @@
 
 </section>
 
-<!-- CATEGORIES -->
-<section class="max-w-7xl mx-auto px-2 mt-2">
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+<!-- ════════════════════════════════
+     FEATURED WORK (EDITORIAL GRID)
+════════════════════════════════ -->
+<section class="max-w-7xl mx-auto px-4 py-20">
 
-    <!-- CARD 1 -->
-    <a href="/weddings" class="group block overflow-hidden">
+  <div class="flex justify-between items-end mb-10">
+    <h2 class="text-2xl md:text-3xl font-light">Selected Work</h2>
+    <a href="/gallery/" class="text-sm text-gray-500 hover:text-black transition">
+      View all →
+    </a>
+  </div>
 
-      <div class="relative h-[380px] md:h-[600px]">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 
-        <img src="{% static 'images/weddings-small.jpg' %}"
-             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+    <!-- item -->
+    <a href="/weddings/" class="group relative overflow-hidden h-[500px] md:h-[650px]">
 
-        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
+      <img src="{% static 'images/weddings-small.jpg' %}"
+           class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
 
-        <div class="absolute inset-0 flex flex-col items-center justify-end pb-10 text-center">
+      <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition"></div>
 
-          <h2 class="text-white text-xl md:text-5xl font-light">
-            Weddings & Love Stories
-          </h2>
-
-          <p class="text-white/70 text-sm md:text-2xl mt-2">
-            View gallery →
-          </p>
-
-        </div>
-
+      <div class="absolute bottom-6 left-6 text-white">
+        <p class="text-xs uppercase tracking-widest text-white/70">Weddings</p>
+        <h3 class="text-xl md:text-2xl font-light">Love Stories</h3>
       </div>
 
     </a>
 
-    <!-- CARD 2 -->
-    <a href="/portraits" class="group block overflow-hidden">
+    <a href="/portraits/" class="group relative overflow-hidden h-[500px] md:h-[650px]">
 
-      <div class="relative h-[380px] md:h-[600px]">
+      <img src="{% static 'images/portraits-small.jpg' %}"
+           class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
 
-        <img src="{% static 'images/portraits-small.jpg' %}"
-             class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+      <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition"></div>
 
-        <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
+      <div class="absolute bottom-6 left-6 text-white">
+        <p class="text-xs uppercase tracking-widest text-white/70">Portraits</p>
+        <h3 class="text-xl md:text-2xl font-light">Human Stories</h3>
+      </div>
 
-        <div class="absolute inset-0 flex flex-col items-center justify-end pb-10 text-center">
+    </a>
 
-          <h2 class="text-white text-xl md:text-6xl font-light">
-            Portraits
-          </h2>
+    <a href="/albums/" class="group relative overflow-hidden h-[500px] md:h-[650px]">
 
-          <p class="text-white/70 text-sm md:text-2xl mt-2">
-            View gallery →
-          </p>
+      <img src="{% static 'images/main.jpg' %}"
+           class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
 
-        </div>
+      <div class="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition"></div>
 
+      <div class="absolute bottom-6 left-6 text-white">
+        <p class="text-xs uppercase tracking-widest text-white/70">Albums</p>
+        <h3 class="text-xl md:text-2xl font-light">Full Stories</h3>
       </div>
 
     </a>
@@ -95,59 +107,70 @@
 
 </section>
 
-<!-- DIVIDER -->
-<div class="h-px bg-gray-200 max-w-6xl mx-auto my-20"></div>
 
-<!-- ABOUT SECTION -->
-<section class="max-w-6xl mx-auto px-6 pt-0 pb-20 flex flex-col md:flex-row items-center gap-12">
+<!-- ════════════════════════════════
+     ABOUT (LUXURY CLEAN SECTION)
+════════════════════════════════ -->
+<section class="max-w-6xl mx-auto px-6 pb-24">
 
-  <!-- TEXT -->
-  <div class="md:w-1/2">
+  <div class="grid md:grid-cols-2 gap-12 items-center">
 
-  <h2 class="text-5xl md:text-6xl font-light leading-tight">
-    Hi, I'm Vasyl.
-  </h2>
+    <!-- text -->
+    <div>
 
-  <h2 class="mt-4 text-3xl md:text-5xl font-light leading-tight">
-    I am a photographer who captures real emotions.
-  </h2>
+      <p class="text-xs uppercase tracking-[0.3em] text-gray-400">
+        About me
+      </p>
 
-  <p class="mt-10 text-gray-600 leading-relaxed text-lg md:text-2xl">
-    I focus on natural light, cinematic tones, and authentic moments.
-    My goal is to create images that feel alive — not staged.
-  </p>
+      <h2 class="mt-4 text-4xl md:text-5xl font-light leading-tight">
+        I don’t take photos.<br>
+        I preserve feelings.
+      </h2>
 
-  <p class="mt-6 text-gray-600 leading-relaxed text-lg md:text-2xl">
-    Weddings, portraits, and love stories are my main focus.
-    Each session is calm, guided, and natural.
-  </p>
+      <p class="mt-6 text-gray-600 text-lg leading-relaxed">
+        I’m Vasyl, a photographer focused on natural light and honest emotion.
+        My work is about presence — not posing.
+      </p>
 
-  <div class="mt-12 flex flex-col sm:flex-row gap-6">
+      <p class="mt-4 text-gray-600 text-lg leading-relaxed">
+        Every session is calm, guided, and built around real human connection.
+      </p>
 
-    <a href="/about"
-       class="px-8 py-4 bg-black text-white rounded-full text-lg hover:bg-gray-800 transition">
-      More about me
-    </a>
+      <a href="/about/"
+         class="inline-block mt-8 px-7 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition">
+        More about me
+      </a>
 
-    <a href="/pricing"
-       class="px-8 py-4 border border-black text-black rounded-full text-lg hover:bg-black hover:text-white transition">
-      Prices & Packages
-    </a>
+    </div>
 
-  </div>
-
-</div>
-
-  <!-- IMAGE -->
-  <div class="md:w-1/2">
-
-    <img
-      src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"
-      class="w-full h-[550px] object-cover rounded-xl"
-      alt="Photographer"
-    />
+    <!-- image -->
+    <div>
+      <img src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"
+           class="w-full h-[600px] object-cover rounded-xl">
+    </div>
 
   </div>
+
+</section>
+
+
+<!-- ════════════════════════════════
+     CTA
+════════════════════════════════ -->
+<section class="bg-black text-white py-20 text-center px-6">
+
+  <h2 class="text-3xl md:text-5xl font-light">
+    Let’s create something timeless
+  </h2>
+
+  <p class="mt-4 text-white/70">
+    Available for weddings, portraits and editorial projects
+  </p>
+
+  <a href="/booking/"
+     class="inline-block mt-8 px-8 py-3 bg-white text-black rounded-full">
+    Book a session
+  </a>
 
 </section>
 
