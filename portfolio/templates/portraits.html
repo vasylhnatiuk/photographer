@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="relative w-full overflow-hidden h-[30vh] sm:h-[35vh] md:h-[43vh]">
+
+  <img
+    src="{% static 'images/portraits.jpg' %}"
+    class="w-full h-full object-cover"
+  />
+
+  <div class="absolute inset-0 bg-black/50"></div>
+
+  <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+
+    <h1 class="text-white text-2xl sm:text-3xl md:text-4xl font-light">
+      Portrait Gallery
+    </h1>
+
+    <p class="text-white/70 mt-2 text-xs sm:text-sm md:text-base">
+      Real moments • Cinematic mood • Natural light
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- GALLERY -->
+<div class="max-w-7xl mx-auto py-10 px-4">
+
+  <div class="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
+
+    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[520px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[550px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1520975958225-8f61d8d1a7b6"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[720px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1519741497674-611481863552"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[600px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[800px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[560px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[650px] cursor-pointer">
+
+    <img src="https://images.unsplash.com/photo-1521334884684-d80222895322"
+         onclick="openLightbox(this.src)"
+         class="w-full mb-5 rounded-2xl break-inside-avoid object-cover min-h-[700px] cursor-pointer">
+
+  </div>
+</div>
+
+
+<!-- LIGHTBOX -->
+<div id="lightbox"
+     class="hidden fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+
+  <!-- IMAGE -->
+  <img id="lightbox-img"
+       class="max-w-[92%] max-h-[80%] rounded-xl object-contain scale-95 transition-transform duration-300">
+
+  <!-- CONTROLS -->
+  <div class="flex items-center gap-10 mt-6 text-white select-none">
+
+    <!-- LEFT -->
+    <button onclick="prevImage()"
+            class="text-4xl px-4 py-2 hover:text-gray-300 transition">
+      ‹
+    </button>
+
+    <!-- CLOSE -->
+    <button onclick="closeLightbox()"
+            class="text-sm border border-white/30 px-5 py-2 rounded-full hover:bg-white hover:text-black transition">
+      Close
+    </button>
+
+    <!-- RIGHT -->
+    <button onclick="nextImage()"
+            class="text-4xl px-4 py-2 hover:text-gray-300 transition">
+      ›
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- JS -->
+<script>
+  const images = [
+    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1",
+    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    "https://images.unsplash.com/photo-1520975958225-8f61d8d1a7b6",
+    "https://images.unsplash.com/photo-1519741497674-611481863552",
+    "https://images.unsplash.com/photo-1517841905240-472988babdf9",
+    "https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5",
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+    "https://images.unsplash.com/photo-1521334884684-d80222895322"
+  ];
+
+  let currentIndex = 0;
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+
+  function openLightbox(src) {
+    currentIndex = images.indexOf(src);
+
+    lightbox.classList.remove('hidden');
+
+    setTimeout(() => {
+      lightbox.classList.remove('opacity-0');
+      lightboxImg.classList.remove('scale-95');
+    }, 10);
+
+    lightboxImg.src = src;
+  }
+
+  function closeLightbox() {
+    lightbox.classList.add('opacity-0');
+    lightboxImg.classList.add('scale-95');
+
+    setTimeout(() => {
+      lightbox.classList.add('hidden');
+    }, 250);
+  }
+
+  function showImage(index) {
+    if (index < 0) index = images.length - 1;
+    if (index >= images.length) index = 0;
+
+    currentIndex = index;
+    lightboxImg.src = images[currentIndex];
+  }
+
+  function nextImage() {
+    showImage(currentIndex + 1);
+  }
+
+  function prevImage() {
+    showImage(currentIndex - 1);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.classList.contains('hidden')) return;
+
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+  });
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+</script>
+
+{% endblock %}
