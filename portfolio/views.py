@@ -31,7 +31,8 @@ def weddings(request):
 def portraits(request):
     return render(request, "portraits.html")
 
-
+def events(request):
+    return render(request, "events.html")
 # 👤 ABOUT
 def about(request):
     return render(request, 'about.html')

@@ -1,24 +1,149 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Gallery</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+{% extends "base.html" %}
+{% load static %}
 
-<body class="bg-black text-white">
+{% block title %}About — Vasyl Hnatiuk{% endblock %}
 
-  <div class="max-w-6xl mx-auto py-10 px-4">
+{% block content %}
 
-    <h1 class="text-4xl mb-10">Gallery</h1>
+<!-- HERO -->
+<section class="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
 
-    <div class="grid md:grid-cols-3 gap-4">
-      {% for photo in photos %}
-        <img src="{{ photo.image.url }}"
-             class="rounded-xl hover:scale-105 transition duration-300">
-      {% endfor %}
+  <img
+    src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+
+  <div class="absolute inset-0 bg-black/60"></div>
+
+  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+
+    <h1 class="text-white font-light text-4xl md:text-6xl">
+      About me
+    </h1>
+
+    <p class="text-white/70 mt-3 text-base md:text-xl max-w-2xl">
+      I capture real emotions, natural light, and honest moments without staging.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- ABOUT TEXT -->
+<section class="max-w-5xl mx-auto px-6 py-20 space-y-10">
+
+  <div class="space-y-6">
+
+    <h2 class="text-2xl md:text-4xl font-light">
+      Hey, I’m Vasyl.
+    </h2>
+
+    <p class="text-gray-600 leading-relaxed text-base md:text-lg">
+      I’m a photographer based in New York, focused on weddings, portraits, and emotional storytelling.
+      My approach is simple — I don’t force moments, I observe them.
+    </p>
+
+    <p class="text-gray-600 leading-relaxed text-base md:text-lg">
+      I believe the best photos are not posed. They happen in-between — in silence, movement, and real connection.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- STYLE SECTION -->
+<section class="bg-black text-white py-20">
+
+  <div class="max-w-5xl mx-auto px-6 text-center space-y-6">
+
+    <h2 class="text-3xl md:text-5xl font-light">
+      My style
+    </h2>
+
+    <p class="text-white/70 text-base md:text-lg leading-relaxed">
+      Cinematic tones, natural light, minimal direction. I keep everything calm so you can be yourself.
+      No stress, no awkward posing — just real moments.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- PRICING -->
+<section class="max-w-5xl mx-auto px-6 py-24">
+
+  <h2 class="text-3xl md:text-5xl font-light text-center mb-12">
+    Pricing
+  </h2>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <!-- Basic -->
+    <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition">
+
+      <h3 class="text-xl font-light">Portrait Session</h3>
+
+      <p class="text-gray-500 text-sm">
+        1 hour • 1 location
+      </p>
+
+      <p class="text-3xl font-light">
+        $250
+      </p>
+
+      <p class="text-gray-500 text-sm">
+        20 edited photos
+      </p>
+
+    </div>
+
+    <!-- Standard -->
+    <div class="border rounded-2xl p-8 text-center space-y-4 shadow-md">
+
+      <h3 class="text-xl font-light">Couple / Lifestyle</h3>
+
+      <p class="text-gray-500 text-sm">
+        1.5–2 hours • 1–2 locations
+      </p>
+
+      <p class="text-3xl font-light">
+        $400
+      </p>
+
+      <p class="text-gray-500 text-sm">
+        40 edited photos
+      </p>
+
+    </div>
+
+    <!-- Premium -->
+    <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition">
+
+      <h3 class="text-xl font-light">Wedding</h3>
+
+      <p class="text-gray-500 text-sm">
+        Full day coverage
+      </p>
+
+      <p class="text-3xl font-light">
+        from $1200
+      </p>
+
+      <p class="text-gray-500 text-sm">
+        Full gallery edited
+      </p>
+
     </div>
 
   </div>
 
-</body>
-</html>
+</section>
+
+
+<!-- CTA -->
+
+
+{% endblock %}
