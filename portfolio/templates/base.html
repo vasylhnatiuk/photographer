@@ -14,17 +14,25 @@
   <style>
     body {
       font-family: 'Libre Baskerville', serif;
-      font-size: 20px;
-      line-height: 1.7;
+      font-size: 18px;
+      line-height: 1.8;
       background: #fff;
       color: #111;
     }
 
+    /* 🔥 mobile readability */
+    @media (max-width: 768px) {
+      body {
+        font-size: 19px;
+        line-height: 1.9;
+      }
+    }
+
     .logo-font {
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 700;
       letter-spacing: 2px;
-      color: white; /* 🔥 ALWAYS WHITE */
+      color: white;
     }
 
     #site-header {
@@ -33,21 +41,18 @@
       left: 0;
       width: 100%;
       z-index: 50;
-
       background: transparent;
       transition: background 0.25s ease;
     }
 
-    /* SCROLL BACKGROUND ONLY */
     .scrolled {
       background: rgba(0, 0, 0, 0.85);
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
-    /* 🔥 HEADER TEXT ALWAYS WHITE */
     #site-header a,
     #site-header button {
       color: white;
+      font-size: 18px;
     }
   </style>
 </head>
@@ -55,14 +60,11 @@
 <body>
 
 <!-- HEADER -->
-<header id="site-header"
-        class="px-6 py-5 flex justify-between items-center">
+<header id="site-header" class="px-6 py-5 flex justify-between items-center">
 
-  <h1 class="logo-font">
-    Vasyl Hnatiuk
-  </h1>
+  <h1 class="logo-font">Vasyl Hnatiuk</h1>
 
-  <nav class="hidden md:flex space-x-10 text-base">
+  <nav class="hidden md:flex space-x-10">
     <a href="/">Home</a>
     <a href="/gallery/">Gallery</a>
     <a href="/albums/">Albums</a>
@@ -73,12 +75,12 @@
   <button id="menu-btn" class="md:hidden text-3xl">☰</button>
 
 </header>
-{% block hero %}
 
-{% endblock %}
+{% block hero %}{% endblock %}
+
 <!-- MOBILE MENU -->
 <div id="mobile-menu"
-     class="hidden md:hidden flex flex-col space-y-4 px-6 py-5 bg-black text-white">
+     class="hidden md:hidden flex flex-col space-y-5 px-6 py-5 bg-black text-white text-lg">
 
   <a href="/">Home</a>
   <a href="/gallery/">Gallery</a>
@@ -89,82 +91,15 @@
 </div>
 
 <!-- CONTENT -->
-<main>
+<main class="pt-0">
   {% block content %}{% endblock %}
 </main>
 
 <!-- FOOTER -->
-<footer class="border-t border-black/10 py-12 text-center text-gray-500 text-sm">
-
-  <div class="flex flex-col items-center gap-5">
-
-    <!-- SOCIAL ICONS -->
-    <div class="flex space-x-10">
-
-      <!-- Instagram -->
-      <a href="https://instagram.com" target="_blank"
-         class="hover:text-black transition">
-
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-7 h-7"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor">
-
-          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-          <path d="M16 11.37a4 4 0 11-7.9 1.26 4 4 0 017.9-1.26z"></path>
-          <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"></line>
-
-        </svg>
-
-      </a>
-
-      <!-- Telegram -->
-      <a href="https://t.me/yourusername" target="_blank"
-         class="hover:text-black transition">
-
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-7 h-7"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor">
-
-          <path d="M22 2L11 13"></path>
-          <path d="M22 2L15 22l-4-9-9-4 20-7z"></path>
-
-        </svg>
-
-      </a>
-
-      <!-- Email -->
-      <a href="mailto:yourmail@gmail.com"
-         class="hover:text-black transition">
-
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="w-7 h-7"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor">
-
-          <path d="M4 4h16v16H4z"></path>
-          <path d="M22 6l-10 7L2 6"></path>
-
-        </svg>
-
-      </a>
-
-    </div>
-
-    <!-- COPYRIGHT -->
-    <p class="text-xs text-gray-400">
-      © 2026 Vasyl Hnatiuk. All rights reserved.
-    </p>
-
-  </div>
-
+<footer class="border-t border-black/10 py-14 text-center text-gray-500 text-sm">
+  <p>© 2026 Vasyl Hnatiuk</p>
 </footer>
 
-<!-- JS -->
 <script>
   const header = document.getElementById('site-header');
   const btn = document.getElementById('menu-btn');
@@ -175,11 +110,7 @@
   });
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 20) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
+    header.classList.toggle('scrolled', window.scrollY > 20);
   });
 </script>
 

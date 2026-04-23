@@ -1,12 +1,13 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
 
 <!-- HERO -->
-<section class="relative w-full overflow-hidden h-[30vh] sm:h-[35vh] md:h-[43vh]">
-{% load static %}
+<section class="relative w-full overflow-hidden h-[35vh] sm:h-[45vh] md:h-[40vh]">
+
   <img
     src="{% static 'images/main.jpg' %}"
     class="w-full h-full object-cover"
@@ -16,16 +17,16 @@
 
   <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
 
-    <h1 class="text-white text-2xl sm:text-3xl md:text-4xl font-light">
+    <h1 class="text-white text-3xl sm:text-4xl md:text-6xl font-light leading-snug">
       Photography that feels real.
     </h1>
 
-    <p class="text-white/70 mt-2 text-xs sm:text-sm md:text-base">
+    <p class="text-white/70 mt-4 text-base sm:text-lg md:text-xl">
       Portrait • Weddings • Love Stories
     </p>
 
     <a href="/booking"
-       class="mt-4 px-6 py-2.5 bg-white text-black rounded-full text-sm">
+       class="mt-6 px-7 py-3 bg-white text-black rounded-full text-base sm:text-lg">
       Book a session
     </a>
 
@@ -33,35 +34,30 @@
 
 </section>
 
-
 <!-- CATEGORIES -->
-<section class="max-w-7xl mx-auto px-2 mt-1">
+<section class="max-w-7xl mx-auto px-2 mt-2">
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
 
     <!-- CARD 1 -->
-    <a href="/weddings"
-       class="group block overflow-hidden">
+    <a href="/weddings" class="group block overflow-hidden">
 
-      <div class="relative h-[340px] md:h-[520px]">
+      <div class="relative h-[380px] md:h-[600px]">
 
         <img src="{% static 'images/weddings-small.jpg' %}"
              class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
 
         <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
 
-        <!-- TEXT (NORMAL FLOW INSIDE FLEX) -->
-        <div class="absolute inset-0 flex flex-col items-center justify-end pb-8 text-center">
+        <div class="absolute inset-0 flex flex-col items-center justify-end pb-10 text-center">
 
-          <div>
-            <h2 class="text-white text-lg md:text-2xl font-light">
-              Weddings & Love Stories
-            </h2>
+          <h2 class="text-white text-xl md:text-5xl font-light">
+            Weddings & Love Stories
+          </h2>
 
-            <p class="text-white/70 text-xs md:text-sm mt-1">
-              View gallery →
-            </p>
-          </div>
+          <p class="text-white/70 text-sm md:text-2xl mt-2">
+            View gallery →
+          </p>
 
         </div>
 
@@ -69,30 +65,25 @@
 
     </a>
 
-
     <!-- CARD 2 -->
-    <a href="/portraits"
-       class="group block overflow-hidden">
+    <a href="/portraits" class="group block overflow-hidden">
 
-      <div class="relative h-[340px] md:h-[520px]">
+      <div class="relative h-[380px] md:h-[600px]">
 
         <img src="{% static 'images/portraits-small.jpg' %}"
              class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
 
         <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition"></div>
 
-        <!-- TEXT -->
-        <div class="absolute inset-0 flex flex-col items-center justify-end pb-8 text-center">
+        <div class="absolute inset-0 flex flex-col items-center justify-end pb-10 text-center">
 
-          <div>
-            <h2 class="text-white text-lg md:text-2xl font-light">
-              Portraits
-            </h2>
+          <h2 class="text-white text-xl md:text-6xl font-light">
+            Portraits
+          </h2>
 
-            <p class="text-white/70 text-xs md:text-sm mt-1">
-              View gallery →
-            </p>
-          </div>
+          <p class="text-white/70 text-sm md:text-2xl mt-2">
+            View gallery →
+          </p>
 
         </div>
 
@@ -103,56 +94,61 @@
   </div>
 
 </section>
-<div class="h-px bg-gray-200 max-w-6xl mx-auto my-16"></div>
 
-<section class="max-w-6xl mx-auto px-6 pt-0 pb-16  flex flex-col md:flex-row items-center gap-10">
+<!-- DIVIDER -->
+<div class="h-px bg-gray-200 max-w-6xl mx-auto my-20"></div>
+
+<!-- ABOUT SECTION -->
+<section class="max-w-6xl mx-auto px-6 pt-0 pb-20 flex flex-col md:flex-row items-center gap-12">
+
   <!-- TEXT -->
   <div class="md:w-1/2">
 
-    <h2 class="text-3xl md:text-4xl font-light leading-tight">
-      Hi, I'm Vasyl.
-    </h2>
+  <h2 class="text-5xl md:text-6xl font-light leading-tight">
+    Hi, I'm Vasyl.
+  </h2>
 
-    <h2 class="mt-2 text-3xl md:text-4xl font-light leading-tight">
-      I am a photographer who captures real emotions.
-    </h2>
+  <h2 class="mt-4 text-3xl md:text-5xl font-light leading-tight">
+    I am a photographer who captures real emotions.
+  </h2>
 
-    <p class="mt-6 text-gray-600 leading-relaxed text-base md:text-lg">
-      I focus on natural light, cinematic tones, and authentic moments.
-      My goal is to create images that feel alive — not staged.
-    </p>
+  <p class="mt-10 text-gray-600 leading-relaxed text-lg md:text-2xl">
+    I focus on natural light, cinematic tones, and authentic moments.
+    My goal is to create images that feel alive — not staged.
+  </p>
 
-    <p class="mt-4 text-gray-600 leading-relaxed text-base md:text-lg">
-      Weddings, portraits, and love stories are my main focus.
-      Each session is a calm, guided experience where you just be yourself.
-    </p>
+  <p class="mt-6 text-gray-600 leading-relaxed text-lg md:text-2xl">
+    Weddings, portraits, and love stories are my main focus.
+    Each session is calm, guided, and natural.
+  </p>
 
-    <div class="mt-8 flex flex-col sm:flex-row gap-4">
+  <div class="mt-12 flex flex-col sm:flex-row gap-6">
 
-      <a href="/about"
-         class="px-6 py-3 bg-black text-white rounded-full text-sm hover:bg-gray-800 transition">
-        More about me
-      </a>
+    <a href="/about"
+       class="px-8 py-4 bg-black text-white rounded-full text-lg hover:bg-gray-800 transition">
+      More about me
+    </a>
 
-      <a href="/pricing"
-         class="px-6 py-3 border border-black text-black rounded-full text-sm hover:bg-black hover:text-white transition">
-        Prices & Packages
-      </a>
-
-    </div>
+    <a href="/pricing"
+       class="px-8 py-4 border border-black text-black rounded-full text-lg hover:bg-black hover:text-white transition">
+      Prices & Packages
+    </a>
 
   </div>
+
+</div>
 
   <!-- IMAGE -->
   <div class="md:w-1/2">
 
     <img
       src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"
-      class="w-full h-[500px] object-cover rounded-xl"
+      class="w-full h-[550px] object-cover rounded-xl"
       alt="Photographer"
     />
 
   </div>
 
 </section>
+
 {% endblock %}
