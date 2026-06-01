@@ -6,74 +6,75 @@
 {% block content %}
 
 <!-- HERO -->
-<section class="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+<!--<section class="relative w-full h-[55vh] md:h-[75vh] overflow-hidden">-->
 
-  <img
-    src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"
-    class="absolute inset-0 w-full h-full object-cover"
-  />
+<!--  <img-->
+<!--    src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"-->
+<!--    class="absolute inset-0 w-full h-full object-cover"-->
+<!--  />-->
 
-  <div class="absolute inset-0 bg-black/60"></div>
+<!--  <div class="absolute inset-0 bg-black/60"></div>-->
 
-  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+<!--  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">-->
 
-    <h1 class="text-white font-light text-4xl md:text-6xl">
-      About me
-    </h1>
+<!--    <h1 class="text-white font-light text-4xl md:text-6xl">-->
+<!--      About me-->
+<!--    </h1>-->
 
-    <p class="text-white/70 mt-3 text-base md:text-xl max-w-2xl">
-      I capture real emotions, natural light, and honest moments without staging.
-    </p>
+<!--    <p class="text-white/70 mt-4 text-base md:text-xl max-w-2xl">-->
+<!--      I capture real emotions, natural light, and honest moments without staging.-->
+<!--    </p>-->
 
-  </div>
+<!--  </div>-->
 
-</section>
-
-
-<!-- ABOUT TEXT -->
-<section class="max-w-5xl mx-auto px-6 py-20 space-y-10">
-
-  <div class="space-y-6">
-
-    <h2 class="text-2xl md:text-4xl font-light">
-      Hey, I’m Vasyl.
-    </h2>
-
-    <p class="text-gray-600 leading-relaxed text-base md:text-lg">
-      I’m a photographer based in New York, focused on weddings, portraits, and emotional storytelling.
-      My approach is simple — I don’t force moments, I observe them.
-    </p>
-
-    <p class="text-gray-600 leading-relaxed text-base md:text-lg">
-      I believe the best photos are not posed. They happen in-between — in silence, movement, and real connection.
-    </p>
-
-  </div>
-
-</section>
+<!--</section>-->
 
 
-<!-- STYLE SECTION -->
-<section class="bg-black text-white py-20">
+<!-- ABOUT -->
+<!--<section class="max-w-5xl mx-auto px-6 py-20 space-y-10">-->
 
-  <div class="max-w-5xl mx-auto px-6 text-center space-y-6">
+<!--  <div class="space-y-6">-->
 
-    <h2 class="text-3xl md:text-5xl font-light">
-      My style
-    </h2>
+<!--    <h2 class="text-2xl md:text-4xl font-light">-->
+<!--      Hey, I’m Vasyl.-->
+<!--    </h2>-->
 
-    <p class="text-white/70 text-base md:text-lg leading-relaxed">
-      Cinematic tones, natural light, minimal direction. I keep everything calm so you can be yourself.
-      No stress, no awkward posing — just real moments.
-    </p>
+<!--    <p class="text-gray-600 leading-relaxed text-base md:text-lg">-->
+<!--      I’m a photographer based in New York, focused on weddings, portraits, and emotional storytelling.-->
+<!--      My approach is simple — I don’t force moments, I observe them.-->
+<!--    </p>-->
 
-  </div>
+<!--    <p class="text-gray-600 leading-relaxed text-base md:text-lg">-->
+<!--      I believe the best photos are not posed. They happen in-between — in silence, movement, and real connection.-->
+<!--    </p>-->
 
-</section>
+<!--  </div>-->
+
+<!--</section>-->
+
+
+<!--&lt;!&ndash; STYLE &ndash;&gt;-->
+<!--<section class="bg-black text-white py-20">-->
+
+<!--  <div class="max-w-5xl mx-auto px-6 text-center space-y-6">-->
+
+<!--    <h2 class="text-3xl md:text-5xl font-light">-->
+<!--      My style-->
+<!--    </h2>-->
+
+<!--    <p class="text-white/70 text-base md:text-lg leading-relaxed">-->
+<!--      Cinematic tones, natural light, minimal direction. I keep everything calm so you can be yourself.-->
+<!--      No stress, no awkward posing — just real moments.-->
+<!--    </p>-->
+
+<!--  </div>-->
+
+<!--</section>-->
 
 
 <!-- PRICING -->
-<section class="max-w-5xl mx-auto px-6 py-24">
+<!-- PRICING -->
+<section class="max-w-6xl mx-auto px-6 py-24">
 
   <h2 class="text-3xl md:text-5xl font-light text-center mb-12">
     Pricing
@@ -81,60 +82,118 @@
 
   <div class="grid md:grid-cols-3 gap-6">
 
-    <!-- Basic -->
+    <!-- Individual -->
     <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition">
 
-      <h3 class="text-xl font-light">Portrait Session</h3>
+      <h3 class="text-xl font-light">Individual Portrait</h3>
+
+      <p class="text-gray-400 line-through text-lg">$300</p>
+      <p class="text-4xl font-light">$150</p>
 
       <p class="text-gray-500 text-sm">
-        1 hour • 1 location
+        1 hour • 1 location<br>
+        40+ edited photos
       </p>
 
-      <p class="text-3xl font-light">
-        $250
-      </p>
-
-      <p class="text-gray-500 text-sm">
-        20 edited photos
-      </p>
+      <span class="inline-block mt-2 text-xs px-3 py-1 bg-black text-white rounded-full">
+        June 2026 only
+      </span>
 
     </div>
 
-    <!-- Standard -->
+
+    <!-- Couple -->
     <div class="border rounded-2xl p-8 text-center space-y-4 shadow-md">
 
-      <h3 class="text-xl font-light">Couple / Lifestyle</h3>
+      <h3 class="text-xl font-light">Couple / Love Story / Elopement</h3>
+
+      <p class="text-gray-400 line-through text-lg">$400</p>
+      <p class="text-4xl font-light">$200</p>
 
       <p class="text-gray-500 text-sm">
-        1.5–2 hours • 1–2 locations
+        1-1.5 hours • 1–2 locations<br>
+        50+ edited photos
       </p>
 
-      <p class="text-3xl font-light">
-        $400
-      </p>
-
-      <p class="text-gray-500 text-sm">
-        40 edited photos
-      </p>
+      <span class="inline-block mt-2 text-xs px-3 py-1 bg-black text-white rounded-full">
+        June 2026 only
+      </span>
 
     </div>
 
-    <!-- Premium -->
+
+    <!-- Maternity -->
     <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition">
 
-      <h3 class="text-xl font-light">Wedding</h3>
+      <h3 class="text-xl font-light">Maternity</h3>
+
+      <p class="text-gray-400 line-through text-lg">$400</p>
+      <p class="text-4xl font-light">$200</p>
 
       <p class="text-gray-500 text-sm">
-        Full day coverage
+        1-1.5 hours • 1 location<br>
+        50+ edited photos
       </p>
 
-      <p class="text-3xl font-light">
-        from $1200
-      </p>
+      <span class="inline-block mt-2 text-xs px-3 py-1 bg-black text-white rounded-full">
+        June 2026 only
+      </span>
 
-      <p class="text-gray-500 text-sm">
-        Full gallery edited
-      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- FAQ -->
+<section class="bg-gray-50 py-24">
+
+  <div class="max-w-5xl mx-auto px-6 space-y-12">
+
+    <h2 class="text-3xl md:text-5xl font-light text-center">
+      Frequently Asked Questions
+    </h2>
+
+    <div class="space-y-10">
+
+      <div>
+        <h3 class="text-xl font-medium">1. Edited Photos Only</h3>
+        <p class="text-gray-600 mt-2 leading-relaxed">
+          You’ll receive all the best edited photos, carefully selected by me.
+          Original files remain with me.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-medium">2. Studio Rental</h3>
+        <p class="text-gray-600 mt-2 leading-relaxed">
+          Studio rental is not included ($50–100/hour depending on location).
+          I can help you choose and book one.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-medium">3. Sharing Photos</h3>
+        <p class="text-gray-600 mt-2 leading-relaxed">
+          I may use selected photos for my portfolio and social media.
+          If you prefer privacy, just tell me before the shoot.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-medium">4. Styling & Guidance</h3>
+        <p class="text-gray-600 mt-2 leading-relaxed">
+          I help with posing, outfits, and overall direction so you feel comfortable even without experience.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-medium">5. Deposit</h3>
+        <p class="text-gray-600 mt-2 leading-relaxed">
+          A $100 deposit is required to secure your date. It’s non-refundable but can be moved if needed.
+        </p>
+      </div>
 
     </div>
 
@@ -144,6 +203,21 @@
 
 
 <!-- CTA -->
+<section class="py-24 text-center">
 
+  <h2 class="text-3xl md:text-5xl font-light">
+    Let’s create something real
+  </h2>
+
+  <p class="text-gray-500 mt-4">
+    Available in New York & travel worldwide.
+  </p>
+
+  <a href="/contact/"
+     class="inline-block mt-8 px-8 py-3 border rounded-full hover:bg-black hover:text-white transition">
+    Contact me
+  </a>
+
+</section>
 
 {% endblock %}

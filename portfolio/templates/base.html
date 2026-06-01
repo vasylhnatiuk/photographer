@@ -125,25 +125,31 @@
 <body>
 
   <!-- ── HEADER ── -->
-  <header id="site-header">
+<header id="site-header" class="relative flex items-center justify-between px-6 py-4">
 
-    <a href="/" class="logo">Vasyl Hnatiuk</a>
+  <!-- LEFT: Logo -->
+  <a href="/" class="logo z-10">
+    vas.photo.nyc
+  </a>
 
-    <!-- desktop nav -->
-    <nav id="desktop-nav" class="hidden lg:flex items-center gap-10">
-      <a href="/">Home</a>
-      <a href="https://instagram.com/vas.photo.nyc"> Booking</a>
-      <a href="/about/">About</a>
-    </nav>
+  <!-- CENTER: Desktop nav (true centered) -->
+  <nav
+    id="desktop-nav"
+    class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2"
+  >
+    <a href="/">Home</a>
+    <a href="https://instagram.com/vas.photo.nyc">Booking</a>
+    <a href="/about/">Prices & FAQ</a>
+  </nav>
 
-    <!-- hamburger (mobile only) -->
-    <button id="menu-btn" class="lg:hidden" aria-label="Open menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+  <!-- RIGHT: Mobile menu -->
+  <button id="menu-btn" class="lg:hidden z-10" aria-label="Open menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
-  </header>
+</header>
 
   <!-- ── MOBILE OVERLAY ── -->
   <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation">
@@ -244,7 +250,7 @@
   </a>
 
   <!-- Telegram -->
-  <a href="https://t.me/yourusername"
+  <a href="https://t.me/reallyops"
      target="_blank"
      class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
 
@@ -256,7 +262,7 @@
   </a>
 
   <!-- Email -->
-  <a href="mailto:yourmail@gmail.com"
+  <a href="mailto:vasylhnatiukjob@gmail.com"
      class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
 
     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
