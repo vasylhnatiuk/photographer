@@ -20,7 +20,7 @@
     </h1>
 
     <p class="text-white/70 mt-3 text-sm md:text-lg">
-      Real moments • Cinematic mood • Natural light
+      Real moments • Cinematic mood • Different lights
     </p>
 
   </div>
@@ -37,7 +37,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 
     <div onclick="openLightbox(0)" class="cursor-pointer overflow-hidden group">
-      <img src="{% static 'images/p14.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+      <img src="{% static 'images/p1.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
     </div>
 
     <div onclick="openLightbox(1)" class="cursor-pointer overflow-hidden group">
@@ -50,9 +50,9 @@
 
   </div>
   <!-- BIG 2 (WITH CAPTION) -->
-  <div onclick="openLightbox(6)" class="cursor-pointer overflow-hidden group relative">
+  <div onclick="openLightbox(3)" class="cursor-pointer overflow-hidden group relative">
 
-    <img src="{% static 'images/p12.jpg' %}"
+    <img src="{% static 'images/p4.jpg' %}"
          class="h-[600px] w-full object-cover group-hover:scale-105 transition duration-700">
 
     <!-- LUX CAPTION -->
@@ -67,7 +67,7 @@
       </h2>
 
       <p class="mt-3 text-white/70 text-sm md:text-base">
-        Every portrait is captured in natural presence, without staging or direction.
+        Every portrait is captured in natural presence.
       </p>
 
     </div>
@@ -93,13 +93,13 @@
 
 
 <!-- BIG 1 -->
-  <div onclick="openLightbox(3)" class="cursor-pointer overflow-hidden group relative">
+  <div onclick="openLightbox(6)" class="cursor-pointer overflow-hidden group relative">
 
-    <img src="{% static 'images/p1.jpg' %}"
-         class="h-[1000px] w-full object-cover group-hover:scale-105 transition duration-700">
+    <img src="{% static 'images/p7.jpg' %}"
+         class="h-[600px] w-full object-cover group-hover:scale-105 transition duration-700">
 
     <!-- LUX CAPTION -->
-    <div class="absolute bottom-8 left-8 text-white max-w-xl">
+    <div class="absolute bottom-10 left-10 text-white max-w-xl">
 
       <p class="text-xs tracking-[0.3em] uppercase text-white/60">
         Selected frame
@@ -150,13 +150,13 @@
 <!-- JS -->
 <script>
 const images = [
-    "{% static 'images/p14.jpg' %}", // 0
+    "{% static 'images/p1.jpg' %}", // 0
     "{% static 'images/p2.jpg' %}",  // 1
     "{% static 'images/p3.jpg' %}",  // 2
-    "{% static 'images/p1.jpg' %}", // 3 BIG 2
+    "{% static 'images/p4.jpg' %}", // 3 BIG 2
     "{% static 'images/p5.jpg' %}",  // 4
     "{% static 'images/p6.jpg' %}",  // 5
-    "{% static 'images/p12.jpg' %}",  // 6 BIG 1
+    "{% static 'images/p7.jpg' %}",  // 6 BIG 1
     "{% static 'images/p8.jpg' %}",  // 7
     "{% static 'images/p9.jpg' %}",  // 8
     "{% static 'images/p10.jpg' %}"  // 9

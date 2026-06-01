@@ -1,46 +1,234 @@
+
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Gallery{% endblock %}
 
 {% block content %}
 
-<section class="relative w-full overflow-hidden h-[30vh] sm:h-[35vh] md:h-[43vh]">
-{% load static %}
-  <img
-    src="{% static 'images/weddings.jpg' %}"
-    class="w-full h-full object-cover"
-  />
+<!-- HERO -->
+<section class="relative w-full h-[40vh] md:h-[55vh] overflow-hidden">
 
-  <div class="absolute inset-0 bg-black/50"></div>
+  <img src="{% static 'images/l013.jpg' %}"
+       class="absolute inset-0 w-full h-full object-cover">
 
-  <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+  <div class="absolute inset-0 bg-black/60"></div>
 
-    <h1 class="text-white text-2xl sm:text-3xl md:text-4xl font-light">
-      Photography that feels real.
+  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+
+    <h1 class="text-white font-light text-3xl md:text-5xl">
+      Love stories & Weddings
     </h1>
 
-    <p class="text-white/70 mt-2 text-xs sm:text-sm md:text-base">
-      Portrait • Weddings • Love Stories
+    <p class="text-white/70 mt-3 text-sm md:text-lg">
+      Real emotions • Timeless memories
     </p>
 
-    <a href="/booking"
-       class="mt-4 px-6 py-2.5 bg-white text-black rounded-full text-sm">
+    <a href="https://instagram.com/vas.photo.nyc"
+       target="_blank"
+       class="mt-6 px-6 py-3 bg-white text-black rounded-full text-sm hover:bg-white/90 transition">
       Book a session
     </a>
 
   </div>
 
 </section>
-<div class="max-w-6xl mx-auto py-10 px-4">
 
-  <h1 class="text-4xl mb-10">In progress</h1>
+<!-- GALLERY -->
+<section class="max-w-6xl mx-auto px-4 py-16 space-y-10">
 
-  <div class="grid md:grid-cols-3 gap-4">
-    {% for photo in photos %}
-      <img src="{{ photo.image.url }}"
-           class="rounded-xl hover:scale-105 transition duration-300">
-    {% endfor %}
+  <!-- ROW 1 -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+    <div onclick="openLightbox(0)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l1.jpg' %}"
+           class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+    <div onclick="openLightbox(1)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l2.jpg' %}"
+           class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+    <div onclick="openLightbox(2)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l3.jpg' %}"
+           class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
   </div>
 
+  <!-- BIG IMAGE -->
+  <div onclick="openLightbox(3)"
+       class="cursor-pointer overflow-hidden group relative">
+
+    <img src="{% static 'images/l4.jpg' %}"
+         class="h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
+
+    <div class="absolute bottom-10 left-10 text-white max-w-xl">
+      <p class="text-xs tracking-[0.3em] uppercase text-white/60">
+        Love Story
+      </p>
+
+      <h2 class="text-3xl md:text-5xl font-light mt-3">
+        Moments that matter
+      </h2>
+    </div>
+
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <div onclick="openLightbox(4)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l5.jpg' %}"
+           class="h-[500px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+    <div onclick="openLightbox(5)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l6.jpg' %}"
+           class="h-[500px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+  </div>
+
+  <!-- BIG IMAGE -->
+  <div onclick="openLightbox(6)"
+       class="cursor-pointer overflow-hidden group relative">
+
+    <img src="{% static 'images/l7.jpg' %}"
+         class="h-[900px] w-full object-cover group-hover:scale-105 transition duration-700">
+
+    <div class="absolute bottom-10 left-10 text-white max-w-xl">
+      <p class="text-xs tracking-[0.3em] uppercase text-white/60">
+        Selected Frame
+      </p>
+
+      <h2 class="text-3xl md:text-5xl font-light mt-3">
+        A day worth remembering
+      </h2>
+    </div>
+
+  </div>
+
+  <!-- ROW 3 -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+    <div onclick="openLightbox(7)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l8.jpg' %}"
+           class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+    <div onclick="openLightbox(8)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l9.jpg' %}"
+           class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+    <div onclick="openLightbox(9)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/l10.jpg' %}"
+           class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+  </div>
+
+  <!-- FINAL IMAGE -->
+  <div onclick="openLightbox(10)"
+       class="cursor-pointer overflow-hidden group">
+
+    <img src="{% static 'images/l11.jpg' %}"
+         class="h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
+
+  </div>
+
+</section>
+
+<!-- LIGHTBOX -->
+<div id="lightbox"
+     class="fixed inset-0 bg-black/95 hidden z-50 flex items-center justify-center">
+
+  <img id="lightbox-img"
+       class="max-w-[92%] max-h-[85%] object-contain">
+
+  <button onclick="closeLightbox()"
+          class="absolute top-6 right-6 text-white text-2xl">
+    ✕
+  </button>
+
+  <button onclick="prevImage()"
+          class="absolute left-6 text-white text-4xl">
+    ‹
+  </button>
+
+  <button onclick="nextImage()"
+          class="absolute right-6 text-white text-4xl">
+    ›
+  </button>
+
 </div>
+
+<script>
+
+const images = [
+  "{% static 'images/l1.jpg' %}",
+  "{% static 'images/l2.jpg' %}",
+  "{% static 'images/l3.jpg' %}",
+  "{% static 'images/l4.jpg' %}",
+  "{% static 'images/l5.jpg' %}",
+  "{% static 'images/l6.jpg' %}",
+  "{% static 'images/l7.jpg' %}",
+  "{% static 'images/l8.jpg' %}",
+  "{% static 'images/l9.jpg' %}",
+  "{% static 'images/l10.jpg' %}",
+  "{% static 'images/l11.jpg' %}"
+];
+
+let currentIndex = 0;
+
+const lightbox = document.getElementById('lightbox');
+const img = document.getElementById('lightbox-img');
+
+function openLightbox(i) {
+  currentIndex = i;
+  img.src = images[i];
+  lightbox.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function show(i) {
+  if (i < 0) i = images.length - 1;
+  if (i >= images.length) i = 0;
+
+  currentIndex = i;
+  img.src = images[i];
+}
+
+function nextImage() {
+  show(currentIndex + 1);
+}
+
+function prevImage() {
+  show(currentIndex - 1);
+}
+
+document.addEventListener('keydown', (e) => {
+
+  if (lightbox.classList.contains('hidden')) return;
+
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') nextImage();
+  if (e.key === 'ArrowLeft') prevImage();
+
+});
+
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+</script>
+
 {% endblock %}
+
