@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Gallery{% endblock %}
+{% block title %}Love stories & Weddings{% endblock %}
 
 {% block content %}
 
@@ -184,14 +184,16 @@
   <img id="lightbox-img"
        class="max-w-[92%] max-h-[85%] object-contain">
 
-  <button onclick="closeLightbox()"
-          class="absolute top-6 right-6 text-white text-2xl">✕</button>
 
   <button onclick="prevImage()"
-          class="absolute left-6 text-white text-4xl">‹</button>
+          class="absolute left-6 text-white text-9xl md:text-[10rem] leading-none opacity-80 hover:opacity-100 transition">
+    ‹
+  </button>
 
   <button onclick="nextImage()"
-          class="absolute right-6 text-white text-4xl">›</button>
+          class="absolute right-6 text-white text-9xl md:text-[10rem] leading-none opacity-80 hover:opacity-100 transition">
+    ›
+  </button>
 
 </div>
 
