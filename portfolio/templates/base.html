@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% load static %}
+<link rel="icon" href="{% static 'images/icon2.png' %}" type="image/x-icon">
   <title>{% block title %}Vasyl Hnatiuk — Photographer{% endblock %}</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,6 +16,10 @@
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'Libre Baskerville', serif;
@@ -33,7 +39,6 @@
       align-items: center;
       justify-content: space-between;
       padding: 20px 28px;
-      /* subtle gradient so white text stays readable over any hero */
       background: linear-gradient(to bottom, rgba(0,0,0,.45) 0%, transparent 100%);
     }
 
@@ -46,7 +51,6 @@
       white-space: nowrap;
     }
 
-    /* desktop nav */
     #desktop-nav a {
       color: rgba(255,255,255,.85);
       text-decoration: none;
@@ -56,7 +60,6 @@
     }
     #desktop-nav a:hover { color: #fff; }
 
-    /* hamburger */
     #menu-btn {
       background: none;
       border: none;
@@ -67,21 +70,18 @@
       gap: 5px;
     }
     #menu-btn span {
-      display: block;
       width: 26px;
       height: 2px;
       background: #fff;
       border-radius: 2px;
-      transition: transform .3s, opacity .3s;
     }
 
-    /* ── MOBILE OVERLAY ── */
+    /* ── MOBILE MENU ── */
     #mobile-menu {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,.75);
       backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
       z-index: 200;
       display: flex;
       flex-direction: column;
@@ -93,6 +93,7 @@
       pointer-events: none;
       transition: opacity .25s ease;
     }
+
     #mobile-menu.open {
       opacity: 1;
       pointer-events: all;
@@ -102,10 +103,7 @@
       color: rgba(255,255,255,.88);
       text-decoration: none;
       font-size: 1.75rem;
-      letter-spacing: .04em;
-      transition: color .2s;
     }
-    #mobile-menu a:hover { color: #fff; }
 
     #close-menu {
       position: absolute;
@@ -116,168 +114,122 @@
       color: #fff;
       font-size: 2rem;
       cursor: pointer;
-      line-height: 1;
-      padding: 4px;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ── HEADER ── -->
-<header id="site-header" class="relative flex items-center justify-between px-6 py-4">
+<!-- ── HEADER ── -->
+<header id="site-header">
 
-  <!-- LEFT: Logo -->
-  <a href="/" class="logo z-10">
-    vas.photo.nyc
-  </a>
+  <!-- LOGO -->
+  <a href="/" class="logo">vas.photo.nyc</a>
 
-  <!-- CENTER: Desktop nav (true centered) -->
+  <!-- NAV -->
   <nav
     id="desktop-nav"
     class="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2"
   >
     <a href="/">Home</a>
-    <a href="https://instagram.com/vas.photo.nyc">Booking</a>
-    <a href="/about/">Prices & FAQ</a>
+    <a href="/#portfolio">Portfolio</a>
+    <a href="/#aboutme">About me</a>
+<!--    <a href="https://instagram.com/vas.photo.nyc"></a>-->
+    <a href="/booking/">Booking & Prices</a>
   </nav>
 
-  <!-- RIGHT: Mobile menu -->
-  <button id="menu-btn" class="lg:hidden z-10" aria-label="Open menu">
-    <span></span>
-    <span></span>
-    <span></span>
+  <!-- MOBILE BUTTON -->
+  <button id="menu-btn" class="lg:hidden">
+    <span></span><span></span><span></span>
   </button>
 
 </header>
 
-  <!-- ── MOBILE OVERLAY ── -->
-  <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation">
+<!-- ── MOBILE MENU ── -->
+<div id="mobile-menu">
+  <button id="close-menu">✕</button>
 
-    <button id="close-menu" aria-label="Close menu">✕</button>
+  <a href="/">Home</a>
+  <a href="/#portfolio">Portfolio</a>
+  <a href="https://instagram.com/vas.photo.nyc">Booking</a>
+  <a href="/#aboutme">About me</a>
+  <a href="/booking/">Booking & Prices</a>
+</div>
 
-    <a href="/">Home</a>
-    <a href="/gallery/">Gallery</a>
-    <a href="/albums/">Albums</a>
-    <a href="/booking/">Booking</a>
-    <a href="/about/">About</a>
+<!-- ── CONTENT ── -->
+<main>
+  {% block content %}{% endblock %}
+</main>
 
-  </div>
+<!-- ── SCRIPT ── -->
+<script>
+  const menu = document.getElementById('mobile-menu');
+  const openBtn = document.getElementById('menu-btn');
+  const closeBtn = document.getElementById('close-menu');
 
-  <!-- ── PAGE CONTENT ── -->
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+  openBtn.addEventListener('click', () => {
+    menu.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
 
-  <!-- ── SCRIPTS ── -->
-  <script>
-    const mobileMenu = document.getElementById('mobile-menu');
-    const openBtn    = document.getElementById('menu-btn');
-    const closeBtn   = document.getElementById('close-menu');
+  closeBtn.addEventListener('click', () => {
+    menu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
 
-    function openMenu() {
-      mobileMenu.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeMenu() {
-      mobileMenu.classList.remove('open');
+  menu.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => {
+      menu.classList.remove('open');
       document.body.style.overflow = '';
-    }
+    })
+  );
+</script>
 
-    openBtn.addEventListener('click', openMenu);
-    closeBtn.addEventListener('click', closeMenu);
-
-    // ESC key
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeMenu();
-    });
-
-    // tap on backdrop (not on a link)
-    mobileMenu.addEventListener('click', e => {
-      if (e.target === mobileMenu) closeMenu();
-    });
-
-    // tap any link → close
-    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
-  </script>
-<!-- LUX FIXED CTA WITH ICONS -->
-<!-- LUX FIXED CTA (VISIBLE ON ANY BACKGROUND) -->
-<!-- LUX FIXED CTA (IMPROVED READABILITY + LARGER) -->
+<!-- ── FIXED CTA ── -->
 <section class="fixed bottom-6 left-0 w-full z-50 pointer-events-none">
 
   <div class="max-w-6xl mx-auto px-4">
 
     <div class="pointer-events-auto
                 backdrop-blur-2xl
-                bg-black/50 md:bg-black/40
+                bg-black/40
                 border border-white/10
                 rounded-full px-7 py-5
-                flex flex-col md:flex-row items-center justify-between gap-5
+                flex items-center justify-between
                 shadow-[0_12px_50px_rgba(0,0,0,0.45)]">
 
-      <!-- TEXT -->
-      <div class="hidden lg:block text-center md:text-left leading-snug">
-        <h2 class="text-white font-light
-                   text-lg sm:text-xl md:text-2xl
-                   tracking-wide">
-          Let’s create something timeless
-        </h2>
+      <h2 class="text-white font-light text-lg md:text-2xl hidden lg:block">
+        Let’s create something timeless
+      </h2>
+
+      <div class="flex items-center gap-4">
+
+        <span class="text-white/70 text-sm md:text-base">
+          Book here →
+        </span>
+
+        <a href="https://instagram.com/vas.photo.nyc"
+           class="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white">
+          IG
+        </a>
+
+        <a href="https://t.me/reallyops"
+           class="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white">
+          TG
+        </a>
+
+        <a href="mailto:vasylhnatiukjob@gmail.com"
+           class="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white">
+          @
+        </a>
+
       </div>
-
-
-      <!-- BUTTON -->
-<!-- BOOK HERE (LUX CONTACT CHOOSER) -->
-<!-- BOOK HERE (LUX CONTACT CHOOSER) -->
-<div class="flex items-center gap-3 md:gap-5">
-
-  <!-- label -->
-  <span class="text-white/70 text-sm md:text-base font-light tracking-wide mr-2">
-    Book here →
-  </span>
-
-  <!-- Instagram -->
-  <a href="https://instagram.com/vas.photo.nyc"
-     target="_blank"
-     class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
-
-    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <rect x="2" y="2" width="20" height="20" rx="5"/>
-      <circle cx="12" cy="12" r="4"/>
-      <circle cx="17.5" cy="6.5" r="1"/>
-    </svg>
-
-  </a>
-
-  <!-- Telegram -->
-  <a href="https://t.me/reallyops"
-     target="_blank"
-     class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
-
-    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path d="M22 2L11 13"/>
-      <path d="M22 2L15 22l-4-9-9-4 20-7z"/>
-    </svg>
-
-  </a>
-
-  <!-- Email -->
-  <a href="mailto:vasylhnatiukjob@gmail.com"
-     class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition text-white">
-
-    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path d="M4 4h16v16H4z"/>
-      <path d="M22 6l-10 7L2 6"/>
-    </svg>
-
-  </a>
-
-</div>
 
     </div>
 
   </div>
 
 </section>
+
 </body>
 </html>

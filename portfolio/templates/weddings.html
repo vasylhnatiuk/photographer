@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 {% load static %}
 
@@ -6,33 +5,65 @@
 
 {% block content %}
 
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 1s ease forwards;
+  }
+
+  .fade-delay-1 { animation-delay: 0.2s; }
+  .fade-delay-2 { animation-delay: 0.4s; }
+  .fade-delay-3 { animation-delay: 0.6s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .hero-sub {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.12em;
+  }
+</style>
+
 <!-- HERO -->
 <section class="relative w-full h-[40vh] md:h-[55vh] overflow-hidden">
 
   <img src="{% static 'images/DSC00766.jpg' %}"
        class="absolute inset-0 w-full h-full object-cover">
 
-  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="absolute inset-0 bg-black/70"></div>
 
-  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+  <!-- TEXT moved DOWN like home -->
+  <div class="relative z-10 h-full flex flex-col items-center justify-end pb-14 text-center px-6">
 
-    <h1 class="text-white font-light text-3xl md:text-5xl">
+    <h1 class="hero-title text-white font-light text-3xl md:text-5xl fade-up fade-delay-1">
       Love stories & Weddings
     </h1>
 
-    <p class="text-white/70 mt-3 text-sm md:text-lg">
+    <p class="hero-sub text-white/70 mt-3 text-sm md:text-lg fade-up fade-delay-2">
       Real emotions • Timeless memories
     </p>
 
     <a href="https://instagram.com/vas.photo.nyc"
        target="_blank"
-       class="mt-6 px-6 py-3 bg-white text-black rounded-full text-sm hover:bg-white/90 transition">
+       class="mt-6 px-6 py-3 bg-white text-black rounded-full text-sm hover:bg-white/90 transition fade-up fade-delay-3">
       Book a session
     </a>
 
   </div>
 
 </section>
+
 
 <!-- GALLERY -->
 <section class="max-w-6xl mx-auto px-4 py-16 space-y-10">
@@ -65,13 +96,15 @@
          class="h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
 
     <div class="absolute bottom-10 left-10 text-white max-w-xl">
-      <p class="text-xs tracking-[0.3em] uppercase text-white/60">
+
+      <p class="text-xs tracking-[0.3em] uppercase text-white/60 fade-up fade-delay-1">
         Love Story
       </p>
 
-      <h2 class="text-3xl md:text-5xl font-light mt-3">
+      <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title fade-up fade-delay-2">
         Moments that matter
       </h2>
+
     </div>
 
   </div>
@@ -99,13 +132,15 @@
          class="h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
 
     <div class="absolute bottom-10 left-10 text-white max-w-xl">
-      <p class="text-xs tracking-[0.3em] uppercase text-white/60">
+
+      <p class="text-xs tracking-[0.3em] uppercase text-white/60 fade-up fade-delay-1">
         Selected Frame
       </p>
 
-      <h2 class="text-3xl md:text-5xl font-light mt-3">
+      <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title fade-up fade-delay-2">
         A day worth remembering
       </h2>
+
     </div>
 
   </div>
@@ -130,7 +165,7 @@
 
   </div>
 
-  <!-- FINAL IMAGE -->
+  <!-- FINAL -->
   <div onclick="openLightbox(10)"
        class="cursor-pointer overflow-hidden group">
 
@@ -141,6 +176,7 @@
 
 </section>
 
+
 <!-- LIGHTBOX -->
 <div id="lightbox"
      class="fixed inset-0 bg-black/95 hidden z-50 flex items-center justify-center">
@@ -149,21 +185,16 @@
        class="max-w-[92%] max-h-[85%] object-contain">
 
   <button onclick="closeLightbox()"
-          class="absolute top-6 right-6 text-white text-2xl">
-    ✕
-  </button>
+          class="absolute top-6 right-6 text-white text-2xl">✕</button>
 
   <button onclick="prevImage()"
-          class="absolute left-6 text-white text-4xl">
-    ‹
-  </button>
+          class="absolute left-6 text-white text-4xl">‹</button>
 
   <button onclick="nextImage()"
-          class="absolute right-6 text-white text-4xl">
-    ›
-  </button>
+          class="absolute right-6 text-white text-4xl">›</button>
 
 </div>
+
 
 <script>
 
@@ -201,27 +232,18 @@ function closeLightbox() {
 function show(i) {
   if (i < 0) i = images.length - 1;
   if (i >= images.length) i = 0;
-
   currentIndex = i;
   img.src = images[i];
 }
 
-function nextImage() {
-  show(currentIndex + 1);
-}
-
-function prevImage() {
-  show(currentIndex - 1);
-}
+function nextImage() { show(currentIndex + 1); }
+function prevImage() { show(currentIndex - 1); }
 
 document.addEventListener('keydown', (e) => {
-
   if (lightbox.classList.contains('hidden')) return;
-
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowRight') nextImage();
   if (e.key === 'ArrowLeft') prevImage();
-
 });
 
 lightbox.addEventListener('click', (e) => {
@@ -231,4 +253,3 @@ lightbox.addEventListener('click', (e) => {
 </script>
 
 {% endblock %}
-

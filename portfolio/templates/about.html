@@ -5,85 +5,87 @@
 
 {% block content %}
 
-<!-- HERO -->
-<!--<section class="relative w-full h-[55vh] md:h-[75vh] overflow-hidden">-->
+<style>
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
 
-<!--  <img-->
-<!--    src="{% static 'images/e4f05b86-18e5-454c-a81a-1dac9f0a32fd.jpg' %}"-->
-<!--    class="absolute inset-0 w-full h-full object-cover"-->
-<!--  />-->
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-<!--  <div class="absolute inset-0 bg-black/60"></div>-->
-
-<!--  <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">-->
-
-<!--    <h1 class="text-white font-light text-4xl md:text-6xl">-->
-<!--      About me-->
-<!--    </h1>-->
-
-<!--    <p class="text-white/70 mt-4 text-base md:text-xl max-w-2xl">-->
-<!--      I capture real emotions, natural light, and honest moments without staging.-->
-<!--    </p>-->
-
-<!--  </div>-->
-
-<!--</section>-->
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+  .reveal-delay-3 { transition-delay: 0.45s; }
+</style>
 
 
-<!-- ABOUT -->
-<!--<section class="max-w-5xl mx-auto px-6 py-20 space-y-10">-->
+<!-- CONTACTS -->
+<section class="max-w-6xl mx-auto px-6 pt-32 pb-14 text-center reveal">
 
-<!--  <div class="space-y-6">-->
+  <p class="text-xs tracking-[0.35em] uppercase text-gray-400 mb-6">
+    Contact
+  </p>
 
-<!--    <h2 class="text-2xl md:text-4xl font-light">-->
-<!--      Hey, I’m Vasyl.-->
-<!--    </h2>-->
+<!--  <h2 class="text-3xl md:text-5xl font-light mb-10">-->
+<!--    Let’s talk-->
+<!--  </h2>-->
 
-<!--    <p class="text-gray-600 leading-relaxed text-base md:text-lg">-->
-<!--      I’m a photographer based in New York, focused on weddings, portraits, and emotional storytelling.-->
-<!--      My approach is simple — I don’t force moments, I observe them.-->
-<!--    </p>-->
+  <div class="space-y-3 mb-10 text-gray-600 font-light">
 
-<!--    <p class="text-gray-600 leading-relaxed text-base md:text-lg">-->
-<!--      I believe the best photos are not posed. They happen in-between — in silence, movement, and real connection.-->
-<!--    </p>-->
+    <p class="tracking-wide">
+      Phone: <span class="text-black">+1 917 200 3617</span>
+    </p>
 
-<!--  </div>-->
+    <p class="tracking-wide">
+      Email: <span class="text-black">vasylhnatiukjob@gmail.com</span>
+    </p>
 
-<!--</section>-->
+  </div>
 
+  <div class="flex flex-col md:flex-row items-center justify-center gap-4">
 
-<!--&lt;!&ndash; STYLE &ndash;&gt;-->
-<!--<section class="bg-black text-white py-20">-->
+    <a href="https://t.me/reallyops"
+       target="_blank"
+       class="px-8 py-3 border border-black/10 rounded-full
+              text-sm tracking-wide font-light
+              hover:bg-black hover:text-white transition">
+      Telegram
+    </a>
 
-<!--  <div class="max-w-5xl mx-auto px-6 text-center space-y-6">-->
+    <a href="https://wa.me/"
+       target="_blank"
+       class="px-8 py-3 border border-black/10 rounded-full
+              text-sm tracking-wide font-light
+              hover:bg-black hover:text-white transition">
+      WhatsApp
+    </a>
 
-<!--    <h2 class="text-3xl md:text-5xl font-light">-->
-<!--      My style-->
-<!--    </h2>-->
+    <a href="mailto:vasylhnatiukjob@gmail.com"
+       class="px-8 py-3 border border-black/10 rounded-full
+              text-sm tracking-wide font-light
+              hover:bg-black hover:text-white transition">
+      Email me
+    </a>
 
-<!--    <p class="text-white/70 text-base md:text-lg leading-relaxed">-->
-<!--      Cinematic tones, natural light, minimal direction. I keep everything calm so you can be yourself.-->
-<!--      No stress, no awkward posing — just real moments.-->
-<!--    </p>-->
+  </div>
 
-<!--  </div>-->
-
-<!--</section>-->
+</section>
 
 
 <!-- PRICING -->
-<!-- PRICING -->
-<section class="max-w-6xl mx-auto px-6 py-24">
+<section class="max-w-6xl mx-auto px-6 py-20">
 
-  <h2 class="text-3xl md:text-5xl font-light text-center mb-12">
+  <h2 class="text-3xl md:text-5xl font-light text-center mb-12 reveal">
     Pricing
   </h2>
 
   <div class="grid md:grid-cols-3 gap-6">
 
-    <!-- Individual -->
-    <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition">
+    <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition reveal reveal-delay-1">
 
       <h3 class="text-xl font-light">Individual Portrait</h3>
 
@@ -101,9 +103,7 @@
 
     </div>
 
-
-    <!-- Couple -->
-    <div class="border rounded-2xl p-8 text-center space-y-4 shadow-md">
+    <div class="border rounded-2xl p-8 text-center space-y-4 shadow-md reveal reveal-delay-2">
 
       <h3 class="text-xl font-light">Couple / Love Story / Elopement</h3>
 
@@ -121,9 +121,7 @@
 
     </div>
 
-
-    <!-- Maternity -->
-    <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition">
+    <div class="border rounded-2xl p-8 text-center space-y-4 hover:shadow-lg transition reveal reveal-delay-3">
 
       <h3 class="text-xl font-light">Maternity</h3>
 
@@ -146,18 +144,18 @@
 </section>
 
 
-<!-- FAQ -->
+<!-- FAQ (FULL RESTORED) -->
 <section class="bg-gray-50 py-24">
 
   <div class="max-w-5xl mx-auto px-6 space-y-12">
 
-    <h2 class="text-3xl md:text-5xl font-light text-center">
+    <h2 class="text-3xl md:text-5xl font-light text-center reveal">
       Frequently Asked Questions
     </h2>
 
     <div class="space-y-10">
 
-      <div>
+      <div class="reveal reveal-delay-1">
         <h3 class="text-xl font-medium">1. Edited Photos Only</h3>
         <p class="text-gray-600 mt-2 leading-relaxed">
           You’ll receive all the best edited photos, carefully selected by me.
@@ -165,7 +163,7 @@
         </p>
       </div>
 
-      <div>
+      <div class="reveal reveal-delay-2">
         <h3 class="text-xl font-medium">2. Studio Rental</h3>
         <p class="text-gray-600 mt-2 leading-relaxed">
           Studio rental is not included ($50–100/hour depending on location).
@@ -173,7 +171,7 @@
         </p>
       </div>
 
-      <div>
+      <div class="reveal reveal-delay-3">
         <h3 class="text-xl font-medium">3. Sharing Photos</h3>
         <p class="text-gray-600 mt-2 leading-relaxed">
           I may use selected photos for my portfolio and social media.
@@ -181,14 +179,14 @@
         </p>
       </div>
 
-      <div>
+      <div class="reveal reveal-delay-1">
         <h3 class="text-xl font-medium">4. Styling & Guidance</h3>
         <p class="text-gray-600 mt-2 leading-relaxed">
           I help with posing, outfits, and overall direction so you feel comfortable even without experience.
         </p>
       </div>
 
-      <div>
+      <div class="reveal reveal-delay-2">
         <h3 class="text-xl font-medium">5. Deposit</h3>
         <p class="text-gray-600 mt-2 leading-relaxed">
           A $100 deposit is required to secure your date. It’s non-refundable but can be moved if needed.
@@ -203,14 +201,14 @@
 
 
 <!-- CTA -->
-<section class="py-24 text-center">
+<section class="py-24 text-center reveal">
 
   <h2 class="text-3xl md:text-5xl font-light">
     Let’s create something real
   </h2>
 
   <p class="text-gray-500 mt-4">
-    Available in New York & travel worldwide.
+    Available in New York & New Jersey
   </p>
 
   <a href="/contact/"
@@ -219,5 +217,22 @@
   </a>
 
 </section>
+<section class="py-25 text-center reveal">
+  <a href="">2026</a>
+</section>
+<script>
+  const els = document.querySelectorAll('.reveal');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  els.forEach(el => io.observe(el));
+</script>
 
 {% endblock %}
