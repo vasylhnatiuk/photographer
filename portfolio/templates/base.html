@@ -115,9 +115,111 @@
       font-size: 2rem;
       cursor: pointer;
     }
+/* ── DISCOUNT POPUP (BIG VERSION) ── */
+.discount-popup {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+
+  width: 420px;              /* ⬆️ was ~220px */
+  padding: 22px 24px;       /* ⬆️ bigger spacing */
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  background: rgba(245, 242, 238, 0.96);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 18px;
+
+  box-shadow: 0 18px 50px rgba(0,0,0,0.12);
+  text-decoration: none;
+
+  z-index: 9999;
+
+  transform: translateY(25px);
+  opacity: 0;
+  animation: popupIn 0.9s ease forwards 1.2s;
+}
+
+@keyframes popupIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.discount-popup:hover {
+  transform: translateY(-3px);
+  transition: 0.3s ease;
+}
+
+.discount-popup__badge {
+  background: #0e0e0e;
+  color: #f5f2ee;
+
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  font-weight: 500;
+}
+
+.discount-popup__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.discount-popup__title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #0e0e0e;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.discount-popup__sub {
+  font-size: 13px;
+  color: #8a8278;
+  margin: 0;
+}
+
+/* close button (optional) */
+.discount-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #8a8278;
+}
+
+/* MOBILE ADAPTATION */
+@media (max-width: 600px) {
+  .discount-popup {
+    width: 92%;
+    right: 4%;
+    bottom: 16px;
+  }
+}
   </style>
 </head>
+<!-- DISCOUNT POPUP -->
+<a href="/booking/" class="discount-popup">
+  <div class="discount-popup__badge">-40%</div>
 
+  <div class="discount-popup__text">
+    <p class="discount-popup__title">
+      Discounts up to 40% only in June
+    </p>
+    <p class="discount-popup__sub">
+      Book your session now
+    </p>
+  </div>
+</a>
 <body>
 
 <!-- ── HEADER ── -->
