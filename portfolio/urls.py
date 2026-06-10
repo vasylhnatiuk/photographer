@@ -6,7 +6,7 @@ urlpatterns = [
     path("love_stories/", views.weddings, name="weddings"),
     path("portraits/", views.portraits, name="portraits"),
     path("events/", views.events, name="events"),
-    path('albums/', views.albums, name='albums'),
+    # path('albums/', views.albums, name='albums'),
     path('about/', views.about, name='about'),
     path('booking/', views.booking, name='booking'),
 ]
