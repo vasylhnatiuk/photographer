@@ -27,13 +27,12 @@
 
 </section>
 
-
 <!-- ════════════════════════════════
      EDITORIAL FLOW
 ════════════════════════════════ -->
 <section class="max-w-6xl mx-auto px-4 py-16 space-y-12">
 
-  <!-- BIG 1 (e1) -->
+  <!-- BIG 1 -->
   <div onclick="openLightbox(0)" class="cursor-pointer overflow-hidden group relative">
 
     <img src="{% static 'images/e1.jpg' %}"
@@ -50,8 +49,7 @@
 
   </div>
 
-
-  <!-- ROW 1 (e7 + e3) -->
+  <!-- ROW 1 -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
     <div onclick="openLightbox(1)" class="cursor-pointer overflow-hidden group">
@@ -66,8 +64,7 @@
 
   </div>
 
-
-  <!-- BIG 2 (e4) -->
+  <!-- BIG 2 -->
   <div onclick="openLightbox(3)" class="cursor-pointer overflow-hidden group relative">
 
     <img src="{% static 'images/e4.jpg' %}"
@@ -84,8 +81,7 @@
 
   </div>
 
-
-  <!-- ROW 2 (e5 + e6) -->
+  <!-- ROW 2 -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
     <div onclick="openLightbox(4)" class="cursor-pointer overflow-hidden group">
@@ -100,8 +96,22 @@
 
   </div>
 
-</section>
+  <!-- ROW 3 -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+    <div onclick="openLightbox(6)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/e8.jpg' %}"
+           class="h-[450px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+    <div onclick="openLightbox(7)" class="cursor-pointer overflow-hidden group">
+      <img src="{% static 'images/e9.jpg' %}"
+           class="h-[450px] w-full object-cover group-hover:scale-105 transition duration-700">
+    </div>
+
+  </div>
+
+</section>
 
 <!-- LIGHTBOX -->
 <div id="lightbox"
@@ -116,16 +126,17 @@
 
 </div>
 
-
 <!-- JS -->
 <script>
 const images = [
-  "{% static 'images/e1.jpg' %}", // 0
-  "{% static 'images/e7.jpg' %}", // 1
-  "{% static 'images/e3.jpg' %}", // 2
-  "{% static 'images/e4.jpg' %}", // 3
-  "{% static 'images/e5.jpg' %}", // 4
-  "{% static 'images/e6.jpg' %}"  // 5
+  "{% static 'images/e1.jpg' %}",
+  "{% static 'images/e7.jpg' %}",
+  "{% static 'images/e3.jpg' %}",
+  "{% static 'images/e4.jpg' %}",
+  "{% static 'images/e5.jpg' %}",
+  "{% static 'images/e6.jpg' %}",
+  "{% static 'images/e8.jpg' %}",
+  "{% static 'images/e9.jpg' %}"
 ];
 
 let currentIndex = 0;
@@ -152,18 +163,26 @@ function show(i) {
   img.src = images[i];
 }
 
-function nextImage() { show(currentIndex + 1); }
-function prevImage() { show(currentIndex - 1); }
+function nextImage() {
+  show(currentIndex + 1);
+}
+
+function prevImage() {
+  show(currentIndex - 1);
+}
 
 document.addEventListener('keydown', (e) => {
   if (lightbox.classList.contains('hidden')) return;
+
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowRight') nextImage();
   if (e.key === 'ArrowLeft') prevImage();
 });
 
 lightbox.addEventListener('click', (e) => {
-  if (e.target === lightbox) closeLightbox();
+  if (e.target === lightbox) {
+    closeLightbox();
+  }
 });
 </script>
 
