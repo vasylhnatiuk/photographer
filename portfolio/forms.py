@@ -39,9 +39,10 @@ class MultipleFileField(forms.FileField):
     def clean(self, data, initial=None):
         if not data:
             return []
+        single_clean = super().clean
         if isinstance(data, (list, tuple)):
-            return [super().clean(item, initial) for item in data]
-        return [super().clean(data, initial)]
+            return [single_clean(item, initial) for item in data]
+        return [single_clean(data, initial)]
 
 
 class PhotoUploadForm(forms.Form):
