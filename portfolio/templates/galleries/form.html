@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} — Vasyl Hnatiuk{% endblock %}
+{% block promo %}{% endblock %}
+{% block site_cta %}{% endblock %}
+{% block content %}
+<style>
+.gallery-admin{max-width:1180px;margin:0 auto;padding:125px 24px 90px}
+.gallery-admin h1{font-size:48px;font-weight:400;margin:0 0 34px;letter-spacing:-.03em}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#888;margin-bottom:10px}
+.admin-form{display:grid;gap:18px}
+.admin-form label{display:grid;gap:7px;font-size:14px}
+.admin-form input,.admin-form textarea,.admin-form select{width:100%;box-sizing:border-box;font:inherit;border:1px solid #ddd;border-radius:10px;padding:12px;background:#fff}
+.admin-form input[type=file]{padding:9px}
+.primary-btn,.secondary-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #111;border-radius:999px;padding:12px 19px;text-decoration:none;cursor:pointer;font:inherit}.primary-btn{background:#111;color:#fff}.secondary-btn{background:#fff;color:#111}
+.settings-box{padding:18px;border:1px solid #ddd;border-radius:14px;background:#fafafa}
+.type-help{padding:15px 17px;border-radius:12px;background:#f5f3ef;color:#555;font-size:13px;line-height:1.55}
+</style>
+<div class="gallery-admin">
+  <div class="eyebrow">Gallery manager</div>
+  <h1>{{ page_title }}</h1>
+
+  <form method="post" enctype="multipart/form-data" class="admin-form">
+    {% csrf_token %}
+
+    <label>Gallery type {{ form.gallery_type }} {{ form.gallery_type.errors }}</label>
+    <div id="type-help" class="type-help"></div>
+
+    <label>Gallery name {{ form.title }} {{ form.title.errors }}</label>
+    <label id="client-name-row">Client name {{ form.client_name }} {{ form.client_name.errors }}</label>
+    <label>Description {{ form.description }} {{ form.description.errors }}</label>
+
+    <label id="category-row">Public category {{ form.showcase_category }} {{ form.showcase_category.errors }}</label>
+
+    <label>Lightroom download link {{ form.lightroom_url }} {{ form.lightroom_url.errors }}
+      <small style="display:block;margin-top:6px;color:#777">Used for full-resolution client delivery when downloads are enabled.</small>
+    </label>
+
+    <label>Gallery cover {{ form.cover }} {{ form.cover.errors }}
+      <small style="display:block;margin-top:6px;color:#777">Large cover shown at the top of the gallery.</small>
+    </label>
+
+    <label id="love-cover-row">Love Stories / portfolio cover {{ form.love_stories_cover }} {{ form.love_stories_cover.errors }}
+      <small style="display:block;margin-top:6px;color:#777">Optional. If empty, the main cover is used.</small>
+    </label>
+
+    <div class="settings-box">
+      <strong style="display:block;margin-bottom:12px">Settings</strong>
+      <label style="display:flex;align-items:center;gap:10px;margin:10px 0">{{ form.is_private }} Private gallery</label>
+      <small style="display:block;color:#777;margin:-5px 0 12px 28px">Private galleries do not appear on the public Love Stories page. The direct gallery link still works.</small>
+      <label style="display:flex;align-items:center;gap:10px;margin:10px 0">{{ form.allow_downloads }} Allow full-resolution downloads</label>
+    </div>
+
+    <button type="submit" class="primary-btn">Create gallery</button>
+  </form>
+</div>
+
+<script>
+const typeField = document.getElementById('id_gallery_type');
+const help = document.getElementById('type-help');
+const clientRow = document.getElementById('client-name-row');
+const categoryRow = document.getElementById('category-row');
+const loveCoverRow = document.getElementById('love-cover-row');
+
+function updateTypeUI() {
+  const showcase = typeField && typeField.value === 'showcase';
+  help.textContent = showcase
+    ? 'General / portfolio gallery: a curated selection made from photos already uploaded to client galleries. One general gallery can contain photos from multiple clients.'
+    : 'Client gallery: the private delivery gallery for one client/session. Photos are uploaded directly into this gallery.';
+  if (clientRow) clientRow.style.display = showcase ? 'none' : 'grid';
+  if (categoryRow) categoryRow.style.display = showcase ? 'grid' : 'none';
+  if (loveCoverRow) loveCoverRow.style.display = showcase ? 'grid' : 'none';
+}
+if (typeField) { typeField.addEventListener('change', updateTypeUI); updateTypeUI(); }
+</script>
+{% endblock %}

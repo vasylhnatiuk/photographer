@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Gallery Manager — Vasyl Hnatiuk{% endblock %}
+{% block promo %}{% endblock %}
+{% block site_cta %}{% endblock %}
+{% block content %}
+<style>
+.gallery-admin{max-width:1280px;margin:0 auto;padding:125px 24px 90px}.gallery-admin h1{font-size:48px;font-weight:400;margin:0 0 34px;letter-spacing:-.03em}.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#888;margin-bottom:10px}.top-row{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:38px}.primary-btn,.secondary-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #111;border-radius:999px;padding:12px 19px;text-decoration:none;cursor:pointer;font:inherit}.primary-btn{background:#111;color:#fff}.secondary-btn{background:#fff;color:#111}.section{margin-top:52px}.section-header{display:flex;justify-content:space-between;align-items:end;gap:20px;border-bottom:1px solid #ddd;padding-bottom:14px;margin-bottom:20px}.section-header h2{font-size:27px;font-weight:400;margin:0}.section-header p{font-size:13px;color:#888;margin:5px 0 0}.manager-list{display:grid;gap:12px}.manager-card{display:grid;grid-template-columns:180px 1fr auto;gap:18px;align-items:center;border:1px solid #e5e5e5;border-radius:14px;padding:10px;background:#fff}.manager-card.dragging{opacity:.45}.manager-cover{width:180px;height:120px;border-radius:9px;overflow:hidden;background:#eee}.manager-cover img{width:100%;height:100%;object-fit:cover}.manager-info h3{font-size:21px;font-weight:400;margin:0 0 7px}.manager-info p{font-size:12px;color:#888;margin:0 0 8px}.badge{display:inline-flex;border-radius:999px;padding:5px 9px;background:#f2f0ec;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#555;margin-right:5px}.manager-actions{display:flex;gap:12px;align-items:center}.manager-actions a{font-size:13px;color:#111}.drag-handle{font-size:18px;color:#aaa;cursor:grab;padding:10px}.empty{padding:30px;color:#888;border:1px dashed #ddd;border-radius:10px}
+@media(max-width:800px){.gallery-admin h1{font-size:38px}.top-row{align-items:flex-start;flex-direction:column}.manager-card{grid-template-columns:100px 1fr}.manager-cover{width:100px;height:90px}.manager-actions{grid-column:2}.drag-handle{grid-column:1;grid-row:1;position:absolute;display:none}}
+</style>
+<div class="gallery-admin">
+  <div class="top-row">
+    <div><div class="eyebrow">Photographer</div><h1>Gallery Manager</h1></div>
+    <a class="primary-btn" href="{% url 'gallery_create' %}">+ New gallery</a>
+  </div>
+
+  <section class="section">
+    <div class="section-header">
+      <div><h2>General / Portfolio galleries</h2><p>Public curated galleries. Drag to change the order on Love Stories.</p></div>
+    </div>
+    <div id="showcase-list" class="manager-list">
+      {% for gallery in showcase_galleries %}
+        {% with first=gallery.showcase_items.first %}
+        <article class="manager-card" data-id="{{ gallery.id }}">
+          <div class="manager-cover">
+            {% if gallery.love_stories_cover %}<img src="{{ gallery.love_stories_cover.url }}" alt="{{ gallery.title }}">
+            {% elif gallery.cover %}<img src="{{ gallery.cover.url }}" alt="{{ gallery.title }}">
+            {% elif first %}<img src="{{ first.photo.image.url }}" alt="{{ gallery.title }}">
+            {% endif %}
+          </div>
+          <div class="manager-info">
+            <h3>{{ gallery.title }}</h3>
+            <p>{{ gallery.showcase_category|title }} · {{ gallery.showcase_items.count }} selected photos</p>
+            {% if gallery.is_private %}<span class="badge">Private</span>{% else %}<span class="badge">Public</span>{% endif %}
+            <span class="badge">Drag to reorder</span>
+          </div>
+          <div class="manager-actions"><span class="drag-handle">↕</span><a href="{% url 'gallery_edit' gallery.slug %}">Edit</a><a href="{% url 'client_gallery' gallery.slug %}" target="_blank">View</a></div>
+        </article>
+        {% endwith %}
+      {% empty %}<div class="empty">No general galleries yet.</div>{% endfor %}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div><h2>Client galleries</h2><p>Private delivery galleries for individual clients. Drag to change your manager order.</p></div>
+    </div>
+    <div id="client-list" class="manager-list">
+      {% for gallery in client_galleries %}
+        <article class="manager-card" data-id="{{ gallery.id }}">
+          <div class="manager-cover">
+            {% if gallery.cover %}<img src="{{ gallery.cover.url }}" alt="{{ gallery.title }}">{% elif gallery.photos.first %}<img src="{{ gallery.photos.first.image.url }}" alt="{{ gallery.title }}">{% endif %}
+          </div>
+          <div class="manager-info">
+            <h3>{{ gallery.title }}</h3>
+            <p>{{ gallery.client_name|default:"No client name" }} · {{ gallery.photos.count }} photos</p>
+            {% if gallery.is_private %}<span class="badge">Private</span>{% else %}<span class="badge">Public</span>{% endif %}
+          </div>
+          <div class="manager-actions"><span class="drag-handle">↕</span><a href="{% url 'gallery_edit' gallery.slug %}">Edit</a><a href="{% url 'client_gallery' gallery.slug %}" target="_blank">View</a></div>
+        </article>
+      {% empty %}<div class="empty">No client galleries yet.</div>{% endfor %}
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script>
+const csrf = '{{ csrf_token }}';
+async function saveGalleryOrder(url, list) {
+  const gallery_ids = [...list.querySelectorAll('.manager-card')].map(el => Number(el.dataset.id));
+  const response = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf},body:JSON.stringify({gallery_ids})});
+  if (!response.ok) alert('Could not save gallery order.');
+}
+function makeSortable(id, url) {
+  const list = document.getElementById(id);
+  if (!list) return;
+  new Sortable(list, {animation:180, handle:'.drag-handle', onEnd:()=>saveGalleryOrder(url,list)});
+}
+makeSortable('showcase-list', '{% url "showcase_reorder" %}');
+makeSortable('client-list', '{% url "client_galleries_reorder" %}');
+</script>
+{% endblock %}

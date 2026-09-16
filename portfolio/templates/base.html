@@ -207,6 +207,8 @@
 }
   </style>
 </head>
+<body>
+{% block promo %}
 <!-- DISCOUNT POPUP -->
 <a href="/booking/" class="discount-popup">
   <div class="discount-popup__badge">-30%</div>
@@ -220,7 +222,7 @@
     </p>
   </div>
 </a>
-<body>
+{% endblock %}
 
 <!-- ── HEADER ── -->
 <header id="site-header">
@@ -286,6 +288,7 @@
   );
 </script>
 
+{% block site_cta %}
 <!-- ── FIXED CTA ── -->
 <section class="fixed bottom-6 left-0 w-full z-50 pointer-events-none hidden lg:block">
 
@@ -372,6 +375,7 @@
   </div>
 
 </section>
+{% endblock %}
 
 </body>
 </html>

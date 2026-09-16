@@ -1,12 +1,34 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Love stories & Weddings{% endblock %}
+{% block title %}Love stories & Weddings
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal-photo').forEach((el, i) => {
+    el.style.transitionDelay = Math.min(i * 0.08, 0.32) + 's';
+    io.observe(el);
+  });
+});
+</script>
+{% endblock %}
+
 
 {% block content %}
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
+
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
 
 .fade-up {
     opacity: 0;
@@ -33,268 +55,765 @@
     font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.12em;
 }
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.gallery-page {
+    background: #faf9f6;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.gallery-hero {
+    position: relative;
+    width: 100%;
+    height: 100svh;
+    min-height: 620px;
+    overflow: hidden;
+}
+
+.gallery-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.04);
+    animation: heroIn 2s cubic-bezier(.22,1,.36,1) forwards, zoom 15s ease-out 2s forwards;
+}
+@keyframes heroIn {
+    to { opacity: 1; transform: scale(1); }
+}
+@keyframes zoom {
+    to { transform: scale(1.045); }
+}
+
+.gallery-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .70);
+}
+
+.gallery-hero-content {
+    position: relative;
+    z-index: 2;
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding: 0 24px 56px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.gallery-content {
+    max-width: 1152px;
+    margin: 0 auto;
+
+    padding: 64px 16px 100px;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 38px;
+}
+
+.section-title {
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.section-number {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #999;
+}
+
+
+/* =========================================================
+   CATEGORY
+   ========================================================= */
+
+.category {
+    margin-bottom: 65px;
+}
+
+.category-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    margin-bottom: 24px;
+}
+
+.category-title-line {
+    width: 28px;
+    height: 1px;
+    background: #aaa;
+}
+
+.category-title h2 {
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 300;
+    font-style: italic;
+}
+
+
+/* =========================================================
+   ONE LARGE FEATURE
+   ONLY ONE ON ENTIRE PAGE
+   ========================================================= */
+
+.featured-gallery {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: 78vh;
+    min-height: 620px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    color: white;
+
+    margin-bottom: 18px;
+}
+
+.featured-gallery img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 700ms ease;
+}
+
+.featured-gallery:hover img {
+    transform: scale(1.05);
+}
+
+.featured-gradient {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.65),
+            rgba(0,0,0,0) 55%
+        );
+}
+
+.featured-caption {
+    position: absolute;
+
+    left: 40px;
+    right: 40px;
+    bottom: 35px;
+
+    color: white;
+}
+
+.featured-caption-small {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+
+    color: rgba(255,255,255,.65);
+
+    margin-bottom: 10px;
+}
+
+.featured-caption h2 {
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    line-height: .95;
+}
+
+
+/* =========================================================
+   VERTICAL CARDS
+   3 IN A ROW
+   ========================================================= */
+
+.gallery-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.gallery-card {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: 470px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    color: white;
+    text-decoration: none;
+
+    background: #ddd;
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 700ms ease;
+}
+
+.gallery-card:hover img {
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   CARD GRADIENT
+   ========================================================= */
+
+.gallery-card-gradient {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.65),
+            rgba(0,0,0,0) 58%
+        );
+}
+
+
+/* =========================================================
+   CARD CAPTION
+   ========================================================= */
+
+.gallery-card-caption {
+    position: absolute;
+
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+
+    color: white;
+}
+
+.gallery-card-caption h3 {
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 31px;
+    font-weight: 300;
+    line-height: .95;
+}
+
+
+/* =========================================================
+   CLIENT SECTION
+   ========================================================= */
+
+.client-section {
+    margin-top: 120px;
+}
+
+.client-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 38px;
+}
+
+.client-header h2 {
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: .85;
+}
+
+.client-header-text {
+    max-width: 330px;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    line-height: 1.8;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   CLIENT CARDS
+   ========================================================= */
+
+.client-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.client-card {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: 470px;
+
+    overflow: hidden;
+
+    color: white;
+    text-decoration: none;
+
+    cursor: pointer;
+
+    background: #ddd;
+}
+
+.client-card img,
+.gallery-card img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 700ms ease, opacity 700ms ease;
+}
+
+.client-card:hover img,
+.gallery-card:hover img {
+    transform: scale(1.05);
+}
+
+.reveal-photo {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
+}
+.reveal-photo.visible {
+    opacity: 1;
+    transform: none;
+}
+
+.client-card-gradient {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.65),
+            rgba(0,0,0,0) 58%
+        );
+}
+
+.client-card-caption {
+    position: absolute;
+
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+}
+
+.client-card-caption h3 {
+    margin: 0;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 31px;
+    font-weight: 300;
+    line-height: .95;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.empty-gallery {
+    padding: 60px 20px;
+
+    text-align: center;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+
+    color: #aaa;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .gallery-content {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .gallery-grid,
+    .client-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .featured-gallery {
+        height: 600px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .gallery-hero {
+        height: 40vh;
+        min-height: 360px;
+    }
+
+    .gallery-hero-content {
+        padding-bottom: 42px;
+    }
+
+    .gallery-hero-content h1 {
+        font-size: 38px;
+    }
+
+    .gallery-hero-content p {
+        font-size: 9px;
+    }
+
+
+    .gallery-content {
+        padding: 50px 16px 75px;
+    }
+
+
+    .section-header {
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 39px;
+    }
+
+
+    .category {
+        margin-bottom: 50px;
+    }
+
+
+    /* ONE BIG IMAGE */
+
+    .featured-gallery {
+        height: 520px;
+        margin-bottom: 16px;
+    }
+
+    .featured-caption {
+        left: 24px;
+        right: 24px;
+        bottom: 25px;
+    }
+
+    .featured-caption h2 {
+        font-size: 40px;
+    }
+
+
+    /* ONE COLUMN */
+
+    .gallery-grid,
+    .client-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .gallery-card,
+    .client-card {
+        height: 500px;
+    }
+
+
+    /* CLIENT */
+
+    .client-section {
+        margin-top: 90px;
+    }
+
+    .client-header {
+        display: block;
+        margin-bottom: 30px;
+    }
+
+    .client-header h2 {
+        font-size: 42px;
+    }
+
+    .client-header-text {
+        margin-top: 22px;
+    }
+
+}
+
 </style>
 
-<!-- HERO -->
-<section class="relative w-full h-[40vh] md:h-[55vh] overflow-hidden">
 
-    <img src="{% static 'images/DSC00766.jpg' %}"
-         class="absolute inset-0 w-full h-full object-cover">
+<div class="gallery-page">
 
-    <div class="absolute inset-0 bg-black/70"></div>
 
-    <div class="relative z-10 h-full flex flex-col items-center justify-end pb-14 text-center px-6">
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
 
-        <h1 class="hero-title text-white font-light text-3xl md:text-5xl fade-up fade-delay-1">
-            Love stories & Weddings
-        </h1>
+    <section class="gallery-hero">
 
-        <p class="hero-sub text-white/70 mt-3 text-sm md:text-lg fade-up fade-delay-2">
-            Real emotions • Timeless memories
-        </p>
+        <img
+            src="{% static 'images/DSC00766.jpg' %}"
+            alt="Love stories and weddings"
+        >
 
-        <a href="https://instagram.com/vas.photo.nyc"
-           target="_blank"
-           class="mt-6 px-6 py-3 bg-white text-black rounded-full text-sm hover:bg-white/90 transition fade-up fade-delay-3">
-            Book a session
-        </a>
+        <div class="gallery-hero-overlay"></div>
 
-    </div>
-</section>
+        <div class="gallery-hero-content">
 
-<!-- GALLERY -->
-<section class="max-w-6xl mx-auto px-4 py-16 space-y-10">
+            <h1 class="hero-title text-white font-light text-3xl md:text-5xl fade-up fade-delay-1">
+                Love stories & Weddings
+            </h1>
 
-    <!-- ROW 1 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div onclick="openLightbox(0)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l1.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+            <p class="hero-sub text-white/70 mt-3 text-sm md:text-lg fade-up fade-delay-2">
+                Real emotions • Timeless memories
+            </p>
+
+            <a
+                href="https://instagram.com/vas.photo.nyc"
+                target="_blank"
+                class="hero-button mt-6 px-6 py-3 bg-white text-black rounded-full text-sm hover:bg-white/90 transition fade-up fade-delay-3"
+            >
+                Book a session
+            </a>
+
         </div>
-        <div onclick="openLightbox(1)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l2.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(2)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l3.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-    </div>
 
-    <!-- BIG IMAGE 1 -->
-    <div onclick="openLightbox(3)" class="cursor-pointer overflow-hidden group relative">
+    </section>
 
-        <img src="{% static 'images/l4.jpg' %}"
-             class="h-[400px] md:h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
 
-        <div class="absolute bottom-10 left-10 text-white max-w-xl">
-            <p class="text-xs tracking-[0.3em] uppercase text-white/60">Love Story</p>
-            <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title">
-                Moments that matter
+
+    <!-- =====================================================
+         SELECTED WORK
+         ===================================================== -->
+
+    <section class="gallery-content">
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Selected Work
             </h2>
 
-        </div>
-    </div>
-
-    <!-- ROW 2 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div onclick="openLightbox(4)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l5.jpg' %}" class="h-[500px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(5)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l6.jpg' %}" class="h-[500px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-    </div>
-
-    <!-- BIG IMAGE 2 -->
-    <div onclick="openLightbox(6)" class="cursor-pointer overflow-hidden group relative">
-
-        <img src="{% static 'images/l7.jpg' %}"
-             class="h-[400px] md:h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
-
-        <div class="absolute bottom-10 left-10 text-white max-w-xl">
-            <p class="text-xs tracking-[0.3em] uppercase text-white/60">Wedding Day</p>
-            <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title">
-                Elegant moments forever
-            </h2>
+            <div class="section-number">
+                01 · Portfolio
+            </div>
 
         </div>
-    </div>
 
-    <!-- ROW 3 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div onclick="openLightbox(7)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l8.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(8)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l9.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(9)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l10.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-    </div>
 
-    <!-- BIG IMAGE 3 -->
-    <div onclick="openLightbox(10)" class="cursor-pointer overflow-hidden group relative">
+        {% if showcase_galleries %}
+            <div class="gallery-grid">
+                {% for gallery in showcase_galleries %}
+                    {% with first=gallery.showcase_items.first %}
+                        <a href="{% url 'client_gallery' gallery.slug %}" class="client-card reveal-photo">
+                            {% if gallery.love_stories_cover %}
+                                <img src="{{ gallery.love_stories_cover.url }}" alt="{{ gallery.title }}" loading="lazy">
+                            {% elif gallery.cover %}
+                                <img src="{{ gallery.cover.url }}" alt="{{ gallery.title }}" loading="lazy">
+                            {% elif first %}
+                                <img src="{{ first.photo.image.url }}" alt="{{ gallery.title }}" loading="lazy">
+                            {% endif %}
+                            <div class="client-card-gradient"></div>
+                            <div class="client-card-caption">
+                                <h3>{{ gallery.title }}</h3>
+                            </div>
+                        </a>
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-gallery">
+                No selected work yet.
+            </div>
+        {% endif %}
 
-        <img src="{% static 'images/l11.jpg' %}"
-             class="h-[400px] md:h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
 
-        <div class="absolute bottom-10 left-10 text-white max-w-xl">
-            <p class="text-xs tracking-[0.3em] uppercase text-white/60">True Love</p>
-            <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title">
-                Waiting for something special
-            </h2>
 
-        </div>
-    </div>
+        <!-- =====================================================
+             CLIENT GALLERIES
+             ===================================================== -->
 
-    <!-- ROW 4 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div onclick="openLightbox(11)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l12.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(12)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l13.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(13)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l14.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-    </div>
+        {% if client_galleries %}
 
-    <!-- BIG IMAGE 4 -->
-    <div onclick="openLightbox(14)" class="cursor-pointer overflow-hidden group relative">
+            <section class="client-section">
 
-        <img src="{% static 'images/l15.jpg' %}"
-             class="h-[400px] md:h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
+                <div class="client-header">
 
-        <div class="absolute bottom-10 left-10 text-white max-w-xl">
-            <p class="text-xs tracking-[0.3em] uppercase text-white/60">Selected frame</p>
-            <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title">
-                A day worth remembering
-            </h2>
+                    <h2>
+                        Client<br>
+                        Stories
+                    </h2>
 
-        </div>
-    </div>
+                    <div class="client-header-text">
+                        Complete galleries created for couples,
+                        families and individual clients.
+                    </div>
 
-    <!-- ROW 5 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div onclick="openLightbox(15)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l16.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(16)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l17.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(17)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l18.jpg' %}" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-    </div>
+                </div>
 
-    <!-- BIG IMAGE 5 -->
-    <div onclick="openLightbox(18)" class="cursor-pointer overflow-hidden group relative">
 
-        <img src="{% static 'images/l19.jpg' %}"
-             class="h-[400px] md:h-[700px] w-full object-cover group-hover:scale-105 transition duration-700">
+                <div class="client-grid">
 
-        <div class="absolute bottom-10 left-10 text-white max-w-xl">
-            <p class="text-xs tracking-[0.3em] uppercase text-white/60">Timeless Love</p>
-            <h2 class="text-3xl md:text-5xl font-light mt-3 hero-title">
-                Capturing every feeling
-            </h2>
+                    {% for gallery in client_galleries %}
 
-        </div>
-    </div>
+                        {% with first=gallery.photos.first %}
 
-    <!-- FINAL ROW -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div onclick="openLightbox(19)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l20.jpg' %}" class="h-[500px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-        <div onclick="openLightbox(20)" class="cursor-pointer overflow-hidden group">
-            <img src="{% static 'images/l21.jpg' %}" class="h-[500px] w-full object-cover group-hover:scale-105 transition duration-700">
-        </div>
-    </div>
+                            <a
+                                href="{% url 'client_gallery' gallery.slug %}"
+                                class="client-card reveal-photo"
+                            >
 
-</section>
+                                {% if gallery.cover %}
 
-<!-- LIGHTBOX -->
-<div id="lightbox"
-     class="fixed inset-0 bg-black/95 hidden z-50 flex items-center justify-center">
+                                    <img
+                                        src="{{ gallery.cover.url }}"
+                                        alt="{{ gallery.title }}"
+                                        loading="lazy"
+                                    >
 
-    <img id="lightbox-img"
-         class="max-w-[92%] max-h-[85%] object-contain">
+                                {% elif first %}
 
-    <button onclick="prevImage()"
-            class="absolute left-6 text-white text-9xl md:text-[10rem] leading-none opacity-80 hover:opacity-100 transition">
-        ‹
-    </button>
+                                    <img
+                                        src="{{ first.image.url }}"
+                                        alt="{{ gallery.title }}"
+                                        loading="lazy"
+                                    >
 
-    <button onclick="nextImage()"
-            class="absolute right-6 text-white text-9xl md:text-[10rem] leading-none opacity-80 hover:opacity-100 transition">
-        ›
-    </button>
+                                {% endif %}
+
+
+                                <div class="client-card-gradient"></div>
+
+
+                                <div class="client-card-caption">
+
+                                    <h3>
+                                        {{ gallery.title }}
+                                    </h3>
+
+                                </div>
+
+                            </a>
+
+                        {% endwith %}
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+    </section>
 
 </div>
 
+
 <script>
-const images = [
-    "{% static 'images/l1.jpg' %}",
-    "{% static 'images/l2.jpg' %}",
-    "{% static 'images/l3.jpg' %}",
-    "{% static 'images/l4.jpg' %}",
-    "{% static 'images/l5.jpg' %}",
-    "{% static 'images/l6.jpg' %}",
-    "{% static 'images/l7.jpg' %}",
-    "{% static 'images/l8.jpg' %}",
-    "{% static 'images/l9.jpg' %}",
-    "{% static 'images/l10.jpg' %}",
-    "{% static 'images/l11.jpg' %}",
-    "{% static 'images/l12.jpg' %}",
-    "{% static 'images/l13.jpg' %}",
-    "{% static 'images/l14.jpg' %}",
-    "{% static 'images/l15.jpg' %}",
-    "{% static 'images/l16.jpg' %}",
-    "{% static 'images/l17.jpg' %}",
-    "{% static 'images/l18.jpg' %}",
-    "{% static 'images/l19.jpg' %}",
-    "{% static 'images/l20.jpg' %}",
-    "{% static 'images/l21.jpg' %}"
-];
-
-let currentIndex = 0;
-
-const lightbox = document.getElementById('lightbox');
-const img = document.getElementById('lightbox-img');
-
-function openLightbox(i) {
-    currentIndex = i;
-    img.src = images[i];
-    lightbox.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-    lightbox.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-function show(i) {
-    if (i < 0) i = images.length - 1;
-    if (i >= images.length) i = 0;
-    currentIndex = i;
-    img.src = images[i];
-}
-
-function nextImage() { show(currentIndex + 1); }
-function prevImage() { show(currentIndex - 1); }
-
-document.addEventListener('keydown', (e) => {
-    if (lightbox.classList.contains('hidden')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') nextImage();
-    if (e.key === 'ArrowLeft') prevImage();
-});
-
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
+document.addEventListener('DOMContentLoaded', () => {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal-photo').forEach((el, i) => {
+    el.style.transitionDelay = Math.min(i * 0.08, 0.32) + 's';
+    io.observe(el);
+  });
 });
 </script>
-
 {% endblock %}
+
