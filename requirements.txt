@@ -1,2 +1,4 @@
-Django>=6.0,<7.0
-Pillow>=12.0
+Django>=5.0,<7.0
+Pillow>=10.0
+boto3>=1.34
+django-storages>=1.14
