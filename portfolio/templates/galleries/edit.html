@@ -103,153 +103,73 @@
         <label style="display:flex;align-items:center;gap:10px;margin:10px 0">{{ form.allow_downloads }} Allow full-resolution downloads</label>
       </div>
 
-      <div id="hidden-selection">
-        {% for photo_id in selected_ids %}<input type="hidden" name="selected_photo_ids" value="{{ photo_id }}">{% endfor %}
-      </div>
-      <button class="primary-btn float-save" type="submit" form="gallery-form">Save changes</button>
+      <button class="primary-btn float-save" type="submit">Save changes</button>
     </form>
   </section>
 
   <section class="panel">
-    <div class="panel-heading"><div><h2>Your photos</h2><p>Upload any images first. They are resized to max 2048px. Click several photos, then drag the group to reorder.</p></div></div>
+    <div class="panel-heading">
+      <div>
+        <h2>Photos</h2>
+        <p>Select several images and press Upload. They go to this gallery (and to R2 if connected).</p>
+      </div>
+    </div>
     <form method="post" enctype="multipart/form-data" class="upload-form">
-      {% csrf_token %}<input type="hidden" name="upload_photos" value="1">
-      <div class="file-row">{{ upload_form.photos }}<button class="primary-btn" type="submit">Upload photos</button></div>
-      {{ upload_form.photos.errors }}
+      {% csrf_token %}
+      <input type="hidden" name="upload_photos" value="1">
+      <div class="file-row">
+        <input type="file" name="photos" accept="image/*" multiple>
+        <button class="primary-btn" type="submit">Upload photos</button>
+      </div>
     </form>
     <div id="photo-grid" class="photo-grid">
       {% for photo in photos %}
-        <div class="photo-item" data-id="{{ photo.id }}"><img src="{{ photo.image.url }}" alt=""><div class="photo-overlay"><span>Drag</span><form method="post" action="{% url 'gallery_delete_photo' photo.id %}" onsubmit="return confirm('Delete this photo?');">{% csrf_token %}<button type="submit">Delete</button></form></div></div>
-      {% empty %}<div class="empty">Upload your own photos here.</div>{% endfor %}
-    </div>
-  </section>
-
-  {% if gallery.is_showcase %}
-  <section class="panel">
-    <div id="showcase-editor">
-      <div class="showcase-note"><strong>From client galleries.</strong> After your own uploads, you can also pick existing client photos. Click several, then drag the group. Order in the selected strip is the public order.</div>
-      <strong style="display:block;margin-bottom:8px">Selected photos</strong>
-      <p class="hint">Click to select several • drag to reorder the group</p>
-      <div id="selected-strip" class="selected-strip">
-        {% for photo in selected_photos %}
-          <div class="selected-item" data-id="{{ photo.id }}"><img src="{{ photo.image.url }}" alt=""><span class="num"></span></div>
-        {% empty %}<div class="selected-empty">No photos selected yet. Upload above or pick from client galleries.</div>{% endfor %}
-      </div>
-      <div class="source-list">
-        {% regroup all_client_photos by album as photo_groups %}
-        {% for group in photo_groups %}
-          <div class="source-group">
-            <div class="source-head"><strong>{{ group.grouper.title }}</strong><span>{{ group.list|length }} photos · {{ group.grouper.get_gallery_type_display }}</span></div>
-            <div class="selection-grid">
-              {% for photo in group.list %}
-                <label class="select-photo">
-                  <img src="{{ photo.image.url }}" alt="" loading="lazy">
-                  <input type="checkbox" class="photo-checkbox" value="{{ photo.id }}" {% if photo.id in selected_ids %}checked{% endif %}>
-                </label>
-              {% endfor %}
-            </div>
+        <div class="photo-item" data-id="{{ photo.id }}">
+          <img src="{{ photo.image.url }}" alt="">
+          <div class="photo-overlay">
+            <span></span>
+            <form method="post" action="{% url 'gallery_delete_photo' photo.id %}" onsubmit="return confirm('Delete this photo?');">
+              {% csrf_token %}<button type="submit">Delete</button>
+            </form>
           </div>
-        {% empty %}
-          <div class="empty">No client gallery photos yet.</div>
-        {% endfor %}
-      </div>
+        </div>
+      {% empty %}
+        <div class="empty">No photos yet. Upload above.</div>
+      {% endfor %}
     </div>
+    {% if gallery.is_showcase %}
+      <p class="hint" style="margin-top:18px">To place photos into 3 / wide / 2 rows, open <a href="{% url 'gallery_layout' gallery.slug %}">Edit layout</a>.</p>
+    {% endif %}
   </section>
-  {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script>
-const csrf = '{{ csrf_token }}';
 const typeField = document.getElementById('id_gallery_type');
-const clientNameRow = document.getElementById('client-name-row');
-const categoryRow = document.getElementById('category-row');
-const loveCoverRow = document.getElementById('love-cover-row');
-
 function updateTypeUI(){
   const showcase = typeField && typeField.value === 'showcase';
+  const clientNameRow = document.getElementById('client-name-row');
+  const categoryRow = document.getElementById('category-row');
+  const loveCoverRow = document.getElementById('love-cover-row');
   if (clientNameRow) clientNameRow.style.display = showcase ? 'none' : 'grid';
   if (categoryRow) categoryRow.style.display = showcase ? 'grid' : 'none';
   if (loveCoverRow) loveCoverRow.style.display = showcase ? 'grid' : 'none';
 }
-if(typeField){typeField.addEventListener('change',updateTypeUI);updateTypeUI();}
+if (typeField) { typeField.addEventListener('change', updateTypeUI); updateTypeUI(); }
 
-const selectedStrip = document.getElementById('selected-strip');
-const hiddenSelection = document.getElementById('hidden-selection');
-const checkboxes = [...document.querySelectorAll('.photo-checkbox')];
-
-function selectedIds(){ return [...selectedStrip.querySelectorAll('.selected-item')].map(el => el.dataset.id); }
-function renderSelected(){
-  if(!selectedStrip) return;
-  const ids = selectedIds();
-  const html = [];
-  if(!ids.length){
-    selectedStrip.innerHTML = '<div class="selected-empty">No photos selected yet. Upload or select photos below.</div>';
-  } else {
-    selectedStrip.innerHTML = '';
-    ids.forEach((id,index)=>{
-      const cb = document.querySelector('.photo-checkbox[value="'+id+'"]');
-      const src = cb ? cb.closest('.select-photo').querySelector('img').src : '';
-      const item=document.createElement('div'); item.className='selected-item'; item.dataset.id=id;
-      const img=document.createElement('img'); img.src=src;
-      const num=document.createElement('span'); num.className='num'; num.textContent=index+1;
-      item.appendChild(img); item.appendChild(num);
-      selectedStrip.appendChild(item);
-    });
-  }
-  if(hiddenSelection){
-    hiddenSelection.innerHTML='';
-    ids.forEach(id=>{const input=document.createElement('input');input.type='hidden';input.name='selected_photo_ids';input.value=id;hiddenSelection.appendChild(input);});
-  }
-}
-
-checkboxes.forEach(cb=>cb.addEventListener('change',()=>{
-  if(!selectedStrip) return;
-  let ids=selectedIds();
-  if(cb.checked && !ids.includes(cb.value)) ids.push(cb.value);
-  if(!cb.checked) ids=ids.filter(id=>id!==cb.value);
-  selectedStrip.innerHTML='';
-  ids.forEach(id=>{
-    const item=document.createElement('div');item.className='selected-item';item.dataset.id=id;
-    selectedStrip.appendChild(item);
-  });
-  renderSelected();
-}));
-
-function enableMultiDrag(container, itemSelector, onEnd){
-  if(!container) return;
-  container.addEventListener('click', (e) => {
-    const item = e.target.closest(itemSelector);
-    if (!item || e.target.closest('button,form,a,input')) return;
-    item.classList.toggle('is-picked');
-  });
-  new Sortable(container, {
+const photoGrid = document.getElementById('photo-grid');
+if (photoGrid && window.Sortable) {
+  new Sortable(photoGrid, {
     animation: 160,
-    draggable: itemSelector,
-    onEnd: (evt) => {
-      const items = [...container.querySelectorAll(itemSelector)];
-      const moved = evt.item;
-      const picked = items.filter(el => el.classList.contains('is-picked'));
-      if (picked.length > 1 && moved.classList.contains('is-picked')) {
-        const others = picked.filter(el => el !== moved);
-        others.forEach(el => moved.after(el));
-      }
-      if (onEnd) onEnd();
+    draggable: '.photo-item',
+    onEnd() {
+      const ids = [...photoGrid.querySelectorAll('.photo-item')].map(el => Number(el.dataset.id));
+      fetch("{% url 'gallery_reorder' gallery.slug %}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: JSON.stringify({photo_ids: ids})
+      });
     }
-  });
-}
-
-if(selectedStrip){
-  enableMultiDrag(selectedStrip, '.selected-item', renderSelected);
-  renderSelected();
-}
-
-const photoGrid=document.getElementById('photo-grid');
-if(photoGrid){
-  enableMultiDrag(photoGrid, '.photo-item', async () => {
-    const ids=[...photoGrid.querySelectorAll('.photo-item')].map(el=>Number(el.dataset.id));
-    const response=await fetch("{% url 'gallery_reorder' gallery.slug %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf},body:JSON.stringify({photo_ids:ids})});
-    if(!response.ok) alert('Could not save photo order.');
   });
 }
 </script>

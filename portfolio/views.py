@@ -166,20 +166,34 @@ def gallery_edit(request, slug):
                 return redirect('gallery_edit', slug=updated.slug)
 
         elif 'upload_photos' in request.POST:
-            upload_form = PhotoUploadForm(request.POST, request.FILES)
-            if upload_form.is_valid():
-                files = upload_form.cleaned_data.get('photos', [])
-                start_order = gallery.photos.count()
-                created = []
-                for index, image in enumerate(files, start=start_order):
-                    image._needs_optimization = True
-                    created.append(Photo.objects.create(album=gallery, image=image, order=index))
-                if gallery.is_showcase and created:
-                    existing = list(
-                        gallery.showcase_items.order_by('order', 'id').values_list('photo_id', flat=True)
-                    )
-                    _save_showcase_selection(gallery, existing + [photo.id for photo in created])
-                return redirect('gallery_edit', slug=gallery.slug)
+            files = request.FILES.getlist('photos')
+            start_order = gallery.photos.count()
+            created = []
+            for index, image in enumerate(files, start=start_order):
+                image._needs_optimization = True
+                created.append(Photo.objects.create(album=gallery, image=image, order=index))
+            if gallery.is_showcase and created:
+                slots = _normalize_slots(gallery.layout_slots)
+                created_ids = [photo.id for photo in created]
+                for photo_id in created_ids:
+                    placed = False
+                    for index, slot in enumerate(slots):
+                        if slot is None:
+                            slots[index] = {'id': photo_id, 'x': 50, 'y': 50, 'z': 100}
+                            placed = True
+                            break
+                    if not placed:
+                        break
+                gallery.layout_slots = slots
+                gallery.save(update_fields=['layout_slots'])
+                existing = list(
+                    gallery.showcase_items.order_by('order', 'id').values_list('photo_id', flat=True)
+                )
+                _save_showcase_selection(gallery, existing + created_ids)
+            next_url = request.POST.get('next') or ''
+            if next_url.startswith('/client-galleries/'):
+                return redirect(next_url)
+            return redirect('gallery_edit', slug=gallery.slug)
     else:
         form = GalleryForm(instance=gallery)
 
@@ -211,8 +225,9 @@ def gallery_layout(request, slug):
     if not gallery.is_showcase:
         return redirect('gallery_edit', slug=gallery.slug)
 
-    library = list(_all_photo_queryset())
-    by_id = {photo.id: photo for photo in library}
+    library = list(gallery.photos.all())
+    extra = [photo for photo in _all_photo_queryset() if photo.album_id != gallery.id]
+    by_id = {photo.id: photo for photo in list(library) + extra}
     slot_ids = _normalize_slots(gallery.layout_slots)
     if not any(slot_ids):
         existing = list(
@@ -229,7 +244,7 @@ def gallery_layout(request, slug):
         slot_ids = _normalize_slots(incoming)
         gallery.layout_slots = slot_ids
         gallery.save(update_fields=['layout_slots'])
-        filled = [photo_id for photo_id in slot_ids if photo_id]
+        filled = [item['id'] for item in slot_ids if item]
         _save_showcase_selection(gallery, filled)
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': True})
@@ -242,6 +257,7 @@ def gallery_layout(request, slug):
         'library': library,
         'slot_ids': slot_ids,
         'slot_count': LAYOUT_SLOT_COUNT,
+        'upload_form': PhotoUploadForm(),
     })
 
 
@@ -393,50 +409,85 @@ def _kind_for_size(size):
     return 'trio'
 
 
+def _slot_entry(item):
+    if item in (None, '', 0):
+        return None
+    if isinstance(item, dict):
+        try:
+            photo_id = int(item.get('id') or 0) or None
+        except (TypeError, ValueError):
+            photo_id = None
+        if not photo_id:
+            return None
+        try:
+            x = max(0, min(100, int(item.get('x', 50))))
+            y = max(0, min(100, int(item.get('y', 50))))
+            z = max(100, min(180, int(item.get('z', 100))))
+        except (TypeError, ValueError):
+            x, y, z = 50, 50, 100
+        return {'id': photo_id, 'x': x, 'y': y, 'z': z}
+    try:
+        photo_id = int(item)
+    except (TypeError, ValueError):
+        return None
+    return {'id': photo_id, 'x': 50, 'y': 50, 'z': 100} if photo_id else None
+
+
 def _normalize_slots(raw, size=LAYOUT_SLOT_COUNT):
     slots = list(raw or [])
-    cleaned = []
-    for item in slots[:size]:
-        try:
-            cleaned.append(int(item) if item not in (None, '', 0) else None)
-        except (TypeError, ValueError):
-            cleaned.append(None)
+    cleaned = [_slot_entry(item) for item in slots[:size]]
     while len(cleaned) < size:
         cleaned.append(None)
     return cleaned
 
 
-def _photos_from_slots(slot_ids):
-    ids = [photo_id for photo_id in slot_ids if photo_id]
+def _slot_ids(slots):
+    return [item['id'] if item else None for item in slots]
+
+
+def _apply_focus(photo, entry):
+    photo.focus_x = entry.get('x', 50) if entry else 50
+    photo.focus_y = entry.get('y', 50) if entry else 50
+    photo.focus_z = entry.get('z', 100) if entry else 100
+    return photo
+
+
+def _photos_from_slots(slots):
+    ids = [item['id'] for item in slots if item]
     by_id = {photo.id: photo for photo in Photo.objects.filter(id__in=ids)}
     photos = []
-    for index, photo_id in enumerate(slot_ids):
-        photo = by_id.get(photo_id)
+    for index, entry in enumerate(slots):
+        if not entry:
+            continue
+        photo = by_id.get(entry['id'])
         if not photo:
             continue
         photo.idx = len(photos)
         photo.slot = index
+        _apply_focus(photo, entry)
         photos.append(photo)
     return photos
 
 
-def _layout_rows(slot_ids, photos_by_id=None):
+def _layout_rows(slots, photos_by_id=None):
     if photos_by_id is None:
-        ids = [photo_id for photo_id in slot_ids if photo_id]
+        ids = [item['id'] for item in slots if item]
         photos_by_id = {photo.id: photo for photo in Photo.objects.filter(id__in=ids)}
     rows = []
     i = 0
     step = 0
-    while i < len(slot_ids):
+    while i < len(slots):
         size = LAYOUT_PATTERN[step % len(LAYOUT_PATTERN)]
-        chunk_ids = slot_ids[i:i + size]
+        chunk = slots[i:i + size]
         cells = []
-        for photo_id in chunk_ids:
-            photo = photos_by_id.get(photo_id) if photo_id else None
+        for entry in chunk:
+            photo = photos_by_id.get(entry['id']) if entry else None
+            if photo:
+                _apply_focus(photo, entry)
             cells.append(photo)
         while len(cells) < size:
             cells.append(None)
-        rows.append({'kind': _kind_for_size(size), 'cells': cells, 'start': i})
+        rows.append({'kind': _kind_for_size(size), 'cells': cells, 'photos': [p for p in cells if p], 'start': i})
         i += size
         step += 1
     return rows
@@ -457,7 +508,7 @@ def _portrait_rows(photos):
             kind = 'pair'
         else:
             kind = 'trio'
-        rows.append({'kind': kind, 'photos': chunk})
+        rows.append({'kind': kind, 'photos': chunk, 'cells': chunk})
         i += len(chunk)
         step += 1
     return rows
@@ -477,15 +528,15 @@ def client_gallery(request, slug):
             return redirect('client_gallery', slug=gallery.slug)
         password_error = 'Wrong password.'
 
-    layout_rows = None
     if gallery.is_showcase:
         slot_ids = _normalize_slots(gallery.layout_slots)
         if any(slot_ids):
             photos = _photos_from_slots(slot_ids)
-            layout_rows = _layout_rows(slot_ids)
         else:
-            items = gallery.showcase_items.select_related('photo', 'photo__album').order_by('order', 'id')
-            photos = [item.photo for item in items]
+            photos = list(gallery.photos.all())
+            if not photos:
+                items = gallery.showcase_items.select_related('photo').order_by('order', 'id')
+                photos = [item.photo for item in items]
             for index, photo in enumerate(photos):
                 photo.idx = index
     else:
@@ -496,11 +547,10 @@ def client_gallery(request, slug):
     return render(request, 'galleries/client.html', {
         'gallery': gallery,
         'photos': photos,
-        'rows': layout_rows or _portrait_rows(photos),
-        'can_reorder': request.user.is_authenticated and unlocked and not layout_rows,
+        'rows': _portrait_rows(photos),
+        'is_admin': request.user.is_authenticated,
         'gallery_locked': gallery.is_private and not unlocked,
         'password_error': password_error,
-        'use_slots': bool(layout_rows),
     })
 
 

@@ -15,6 +15,7 @@ class GalleryForm(forms.ModelForm):
             'cover',
             'love_stories_cover',
             'is_private',
+            'access_password',
             'allow_downloads',
         ]
         widgets = {
@@ -25,31 +26,20 @@ class GalleryForm(forms.ModelForm):
             'showcase_category': forms.Select(),
             'lightroom_url': forms.URLInput(attrs={'placeholder': 'https://lightroom.adobe.com/...'}),
             'is_private': forms.CheckboxInput(),
+            'access_password': forms.TextInput(attrs={'placeholder': '1212'}),
             'allow_downloads': forms.CheckboxInput(),
         }
 
 
-class MultipleFileInput(forms.FileInput):
+class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
 
-class MultipleFileField(forms.FileField):
-    widget = MultipleFileInput
-
-    def clean(self, data, initial=None):
-        if not data:
-            return []
-        single_clean = super().clean
-        if isinstance(data, (list, tuple)):
-            return [single_clean(item, initial) for item in data]
-        return [single_clean(data, initial)]
-
-
 class PhotoUploadForm(forms.Form):
-    photos = MultipleFileField(
+    photos = forms.FileField(
         required=False,
         widget=MultipleFileInput(attrs={
-            'accept': 'image/jpeg,image/png,image/webp',
+            'accept': 'image/jpeg,image/png,image/webp,image/jpg',
             'multiple': True,
         }),
     )

@@ -1,261 +1,142 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}{{ gallery.title }} — Vasyl Hnatiuk Photography{% endblock %}
+{% block body_class %}{% if gallery.is_private %}hide-main-nav{% endif %}{% endblock %}
 {% block promo %}{% if not gallery.is_private %}{{ block.super }}{% endif %}{% endblock %}
 {% block site_cta %}{% if not gallery.is_private %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
-
-.hero-title { font-family: 'Cormorant Garamond', serif; }
-.hero-sub { font-family: 'Montserrat', sans-serif; letter-spacing: 0.12em; }
-
-.hero {
-  height: 100svh;
-  min-height: 620px;
-  position: relative;
-  overflow: hidden;
-  background: #111;
-}
-.hero img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.04);
-  animation: heroIn 2s cubic-bezier(.22,1,.36,1) forwards, zoom 15s ease-out 2s forwards;
-}
-.hero:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,.2), transparent 42%, rgba(0,0,0,.78));
-  pointer-events: none;
-}
-.top {
-  position: absolute;
-  z-index: 2;
-  top: 78px;
-  left: 0;
-  right: 0;
-  padding: 0 38px;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 10px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-}
+.hero { height: 100svh; min-height: 620px; position: relative; overflow: hidden; background: #111; }
+.hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.04); animation: heroIn 2s cubic-bezier(.22,1,.36,1) forwards, zoom 15s ease-out 2s forwards; }
+.hero:after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.2), transparent 42%, rgba(0,0,0,.78)); pointer-events: none; }
+.top { position: absolute; z-index: 2; top: 78px; left: 0; right: 0; padding: 0 38px; color: #fff; display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; animation: fade 1s ease 1s forwards; }
 .top a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.4); padding-bottom: 2px; }
-.hero-content {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  bottom: 12%;
-  transform: translateX(-50%);
-  width: min(1100px, calc(100% - 50px));
-  color: #fff;
-  text-align: left;
-}
-.eyebrow, .hero-title-xl, .hero-client, .hero-desc {
-  opacity: 0;
-  transform: translateY(32px);
-}
-.eyebrow {
-  font-size: 10px;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.75);
-  animation: reveal 1s cubic-bezier(.22,1,.36,1) 1.35s forwards;
-}
-.hero-title-xl {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(54px, 8vw, 110px);
-  font-weight: 400;
-  line-height: .88;
-  letter-spacing: -.035em;
-  margin: 15px 0 0;
-  animation: reveal 1.2s cubic-bezier(.22,1,.36,1) 1.55s forwards;
-}
-.hero-client {
-  font-size: 14px;
-  margin-top: 20px;
-  color: rgba(255,255,255,.85);
-  animation: reveal 1s cubic-bezier(.22,1,.36,1) 1.8s forwards;
-}
-.hero-desc {
-  font-size: 13px;
-  line-height: 1.7;
-  color: rgba(255,255,255,.7);
-  max-width: 580px;
-  margin-top: 8px;
-  animation: reveal 1s cubic-bezier(.22,1,.36,1) 1.95s forwards;
-}
-.top { opacity: 0; animation: fade 1s ease 1s forwards; }
-.scroll {
-  position: absolute;
-  z-index: 2;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #fff;
-  font-size: 9px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  opacity: 0;
-  animation: fade 1s ease 2.5s forwards;
-}
-.scroll i { display: block; width: 1px; height: 42px; background: rgba(255,255,255,.65); margin: 8px auto 0; animation: pulse 2s infinite; }
-@keyframes reveal { to { opacity: 1; transform: none; } }
-@keyframes fade { to { opacity: 1; } }
-@keyframes pulse { 50% { opacity: .35; } }
-
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  padding: 28px 20px 8px;
-}
-.actions a {
-  color: #111;
-  text-decoration: none;
-  font-size: 10px;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  border-bottom: 1px solid #111;
-  padding-bottom: 3px;
-}
-
-/* client galleries: original masonry, no crop */
+.hero-content { position: absolute; z-index: 2; left: 50%; bottom: 12%; transform: translateX(-50%); width: min(1100px, calc(100% - 50px)); color: #fff; }
+.eyebrow, .hero-title-xl, .hero-client, .hero-desc { opacity: 0; transform: translateY(32px); }
+.eyebrow { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: rgba(255,255,255,.75); animation: reveal 1s cubic-bezier(.22,1,.36,1) 1.35s forwards; }
+.hero-title-xl { font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(54px, 8vw, 110px); font-weight: 400; line-height: .88; letter-spacing: -.035em; margin: 15px 0 0; animation: reveal 1.2s cubic-bezier(.22,1,.36,1) 1.55s forwards; }
+.hero-client { font-size: 14px; margin-top: 20px; color: rgba(255,255,255,.85); animation: reveal 1s cubic-bezier(.22,1,.36,1) 1.8s forwards; }
+.hero-desc { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,.7); max-width: 580px; margin-top: 8px; animation: reveal 1s cubic-bezier(.22,1,.36,1) 1.95s forwards; }
+.scroll { position: absolute; z-index: 2; bottom: 25px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; opacity: 0; animation: fade 1s ease 2.5s forwards; }
+.scroll i { display: block; width: 1px; height: 42px; background: rgba(255,255,255,.65); margin: 8px auto 0; }
+.actions { display: flex; justify-content: center; gap: 28px; padding: 28px 20px 8px; flex-wrap: wrap; }
+.actions a { color: #111; text-decoration: none; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; border-bottom: 1px solid #111; padding-bottom: 3px; }
 .masonry-wrap { max-width: 1800px; margin: auto; padding: 18px 22px 110px; }
 .masonry { columns: 4 240px; column-gap: 5px; }
+.masonry.is-pending { visibility: hidden; }
 .masonry .photo { display: block; break-inside: avoid; margin: 0 0 5px; overflow: hidden; cursor: zoom-in; }
-.masonry .photo img { width: 100%; height: auto; display: block; transition: transform .7s ease; }
-.masonry .photo:hover img { transform: scale(1.015); }
-
+.masonry .photo img { width: 100%; height: auto; display: block; }
 .end { text-align: center; padding: 40px 20px 120px; }
 .end-name { font-family: "Cormorant Garamond", Georgia, serif; font-size: 34px; }
 .end-sub { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: #888; margin-top: 8px; }
-
-.photos-blurred img { filter: blur(18px) saturate(.7); transform: scale(1.06); pointer-events: none; user-select: none; }
-.lock-card {
-  max-width: 420px; margin: 28px auto 0; padding: 28px 24px; text-align: center;
-  background: #fff; border: 1px solid #eee; border-radius: 16px;
-}
-.lock-card input {
-  width: 100%; box-sizing: border-box; font: inherit; border: 1px solid #ddd;
-  border-radius: 10px; padding: 12px; margin: 12px 0;
-}
-.lock-card button {
-  border: 1px solid #111; background: #111; color: #fff; border-radius: 999px;
-  padding: 11px 18px; cursor: pointer; font: inherit;
-}
-.lock-error { color: #a00; font-size: 13px; }
+.lock-form { margin-top: 28px; max-width: 320px; animation: reveal 1.1s cubic-bezier(.22,1,.36,1) 1.9s forwards; opacity: 0; transform: translateY(24px); }
+.lock-label { font-family: Montserrat, sans-serif; font-size: 9px; letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.62); margin-bottom: 14px; }
+.lock-row { display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid rgba(255,255,255,.35); padding-bottom: 8px; }
+.lock-row input { flex: 1; background: transparent; border: 0; outline: none; color: #fff; font-family: "Cormorant Garamond", Georgia, serif; font-size: 22px; font-weight: 300; letter-spacing: .08em; padding: 4px 0; }
+.lock-row input::placeholder { color: rgba(255,255,255,.35); font-style: italic; }
+.lock-row button { background: none; border: 0; color: #fff; font-family: Montserrat, sans-serif; font-size: 9px; letter-spacing: .22em; text-transform: uppercase; padding: 0; cursor: pointer; opacity: .8; }
+.lock-row button:hover { opacity: 1; }
+.lock-error { color: #e8c4c4; font-size: 12px; margin-top: 10px; letter-spacing: .04em; }
+.photos-blurred img { filter: blur(18px); pointer-events: none; }
+@keyframes reveal { to { opacity: 1; transform: none; } }
+@keyframes fade { to { opacity: 1; } }
 @keyframes heroIn { to { opacity: 1; transform: scale(1); } }
 @keyframes zoom { to { transform: scale(1.045); } }
-
-@media (max-width: 1100px) { .masonry { columns: 3 220px; } }
+@media (max-width: 1100px) {
+  .masonry { columns: 3 220px; }
+}
 @media (max-width: 700px) {
   .top { padding: 0 18px; }
   .hero-title-xl { font-size: clamp(50px, 15vw, 78px); }
-  .masonry-wrap { padding: 12px 8px 70px; }
   .masonry { columns: 2 140px; column-gap: 4px; }
 }
 </style>
 
-{% if gallery.cover %}
+{% if gallery.cover or gallery_locked %}
 <section class="hero">
-  <img src="{{ gallery.cover.url }}" alt="{{ gallery.title }}">
+  {% if gallery.cover %}<img src="{{ gallery.cover.url }}" alt="{{ gallery.title }}">{% endif %}
+  {% if not gallery_locked %}
   <div class="top">
     {% if not gallery.is_private %}<a href="{% url 'weddings' %}">All galleries</a>{% else %}<span>Private gallery</span>{% endif %}
-    <span>{% if gallery_locked %}Locked{% else %}{{ photos|length }} photographs{% endif %}</span>
+    <span>{{ photos|length }} photographs</span>
   </div>
+  {% endif %}
   <div class="hero-content">
+    {% if not gallery_locked %}
     <div class="eyebrow">{% if gallery.is_showcase %}Portfolio Gallery{% else %}Client Gallery{% endif %}</div>
+    {% endif %}
     <h1 class="hero-title-xl">{{ gallery.title }}</h1>
+    {% if gallery_locked %}
+    <form method="post" class="lock-form">
+      {% csrf_token %}
+      <div class="lock-label">Private gallery</div>
+      <div class="lock-row">
+        <input type="password" name="gallery_password" placeholder="Password" autofocus autocomplete="off">
+        <button type="submit">Enter</button>
+      </div>
+      {% if password_error %}<p class="lock-error">{{ password_error }}</p>{% endif %}
+    </form>
+    {% else %}
     {% if gallery.client_name %}<div class="hero-client">{{ gallery.client_name }}</div>{% endif %}
     {% if gallery.description %}<div class="hero-desc">{{ gallery.description }}</div>{% endif %}
+    {% endif %}
   </div>
-  <div class="scroll">Scroll<i></i></div>
+  {% if not gallery_locked %}<div class="scroll">Scroll<i></i></div>{% endif %}
 </section>
 {% endif %}
 
+{% if not gallery_locked %}
 <div class="actions">
-  {% if not gallery.is_private %}
-  <a href="{% url 'weddings' %}">All galleries</a>
-  {% endif %}
-  {% if can_reorder %}
-    <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#888">Admin: click several photos, then drag</span>
+  {% if not gallery.is_private %}<a href="{% url 'weddings' %}">All galleries</a>{% endif %}
+  {% if is_admin %}
     <a href="{% url 'gallery_edit' gallery.slug %}">Edit gallery</a>
+    {% if gallery.is_showcase %}<a href="{% url 'gallery_layout' gallery.slug %}">Edit layout</a>{% endif %}
   {% endif %}
-  {% if gallery.allow_downloads and gallery.lightroom_url and not gallery_locked %}
+  {% if gallery.allow_downloads and gallery.lightroom_url %}
     <a href="{{ gallery.lightroom_url }}" target="_blank" rel="noopener noreferrer">Download full-resolution photos</a>
   {% endif %}
 </div>
-
-{% if gallery_locked %}
-<div class="lock-card">
-  <p style="margin:0 0 8px;letter-spacing:.16em;text-transform:uppercase;font-size:10px;color:#888">Private gallery</p>
-  <form method="post">
-    {% csrf_token %}
-    <input type="password" name="gallery_password" placeholder="Password" autofocus>
-    {% if password_error %}<p class="lock-error">{{ password_error }}</p>{% endif %}
-    <button type="submit">View photos</button>
-  </form>
-</div>
-<div class="photos-blurred">
 {% endif %}
 
+{% if not gallery_locked %}
+
 {% if gallery.is_showcase %}
-<section id="gallery-flow" class="max-w-6xl mx-auto px-4 py-16 space-y-10">
+<section class="max-w-6xl mx-auto px-4 py-16 space-y-10">
   {% for row in rows %}
-    {% with items=row.cells|default:row.photos %}
     {% if row.kind == 'trio' %}
-      <div class="js-sort-row grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {% for photo in items %}
-          {% if photo %}
-          <div class="js-shot cursor-pointer overflow-hidden group relative" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(!window.canReorder) openLightbox({{ photo.idx }})">
-            <img src="{{ photo.image.url }}" alt="" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {% for photo in row.photos %}
+          <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
+            <img src="{{ photo.image.url }}" alt="" class="h-[480px] w-full object-cover group-hover:scale-105 transition duration-700" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
           </div>
-          {% endif %}
         {% endfor %}
       </div>
     {% elif row.kind == 'pair' %}
-      <div class="js-sort-row grid grid-cols-1 md:grid-cols-2 gap-4">
-        {% for photo in items %}
-          {% if photo %}
-          <div class="js-shot cursor-pointer overflow-hidden group relative" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(!window.canReorder) openLightbox({{ photo.idx }})">
-            <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[450px] w-full object-cover group-hover:scale-105 transition duration-700">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for photo in row.photos %}
+          <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
+            <img src="{{ photo.image.url }}" alt="" class="h-[480px] md:h-[540px] w-full object-cover group-hover:scale-105 transition duration-700" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
           </div>
-          {% endif %}
         {% endfor %}
       </div>
     {% else %}
-      <div class="js-sort-row">
-      {% for photo in items %}
-        {% if photo %}
-        <div class="js-shot cursor-pointer overflow-hidden group relative" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(!window.canReorder) openLightbox({{ photo.idx }})">
+      {% for photo in row.photos %}
+        <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
           <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[600px] w-full object-cover group-hover:scale-105 transition duration-700">
         </div>
-        {% endif %}
       {% endfor %}
-      </div>
     {% endif %}
-    {% endwith %}
   {% empty %}
     <p class="text-center text-gray-400">No photos in this gallery yet.</p>
   {% endfor %}
 </section>
 {% else %}
 <main class="masonry-wrap">
-  <div id="gallery-flow" class="masonry">
+  <div class="masonry is-pending" id="client-masonry">
     {% for photo in photos %}
-      <a class="photo js-shot" href="{{ photo.image.url }}" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(window.canReorder){event.preventDefault();return false;} openLightbox({{ photo.idx }}); return false;">
-        <img src="{{ photo.image.url }}" alt="{{ photo.title|default:gallery.title }}" loading="lazy">
+      <a class="photo" href="{{ photo.image.url }}" onclick="openLightbox({{ photo.idx }}); return false;">
+        <img src="{{ photo.image.url }}" alt="" {% if forloop.counter > 6 %}loading="lazy"{% endif %}>
       </a>
     {% empty %}
       <p>No photos in this gallery yet.</p>
@@ -263,11 +144,9 @@
   </div>
 </main>
 {% endif %}
-<style>
-.js-shot.is-picked{outline:3px solid #111;outline-offset:-3px}
-{% if can_reorder %}.js-shot{cursor:grab !important}{% endif %}
-</style>
-{% if gallery_locked %}</div>{% endif %}
+{% endif %}
+
+{% if not gallery_locked %}
 <footer class="end">
   <div class="end-name">Vasyl Hnatiuk</div>
   <div class="end-sub">Photography · New York City</div>
@@ -275,10 +154,9 @@
 
 <div id="lightbox" class="fixed inset-0 bg-black/95 hidden z-50 flex items-center justify-center">
   <img id="lightbox-img" class="max-w-[92%] max-h-[85%] object-contain">
-  <button onclick="prevImage()" type="button" class="absolute left-6 text-white text-9xl md:text-[10rem] leading-none opacity-80 hover:opacity-100 transition">‹</button>
-  <button onclick="nextImage()" type="button" class="absolute right-6 text-white text-9xl md:text-[10rem] leading-none opacity-80 hover:opacity-100 transition">›</button>
+  <button onclick="prevImage()" type="button" class="absolute left-6 text-white text-7xl leading-none">‹</button>
+  <button onclick="nextImage()" type="button" class="absolute right-6 text-white text-7xl leading-none">›</button>
 </div>
-
 <script>
 const images = [{% for photo in photos %}"{{ photo.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}];
 let currentIndex = 0;
@@ -310,55 +188,19 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') prevImage();
 });
 lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-</script>
-{% if can_reorder %}
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
-<script>
-window.canReorder = true;
-const csrf = '{{ csrf_token }}';
-const flow = document.getElementById('gallery-flow');
-
-function saveOrder() {
-  if (!flow) return;
-  const ids = [...flow.querySelectorAll('.js-shot')].map(el => Number(el.dataset.id));
-  fetch("{% url 'gallery_reorder' gallery.slug %}", {
-    method: 'POST',
-    headers: {'Content-Type':'application/json','X-CSRFToken':csrf},
-    body: JSON.stringify({photo_ids: ids})
-  }).then(r => { if (!r.ok) alert('Could not save order.'); });
-}
-
-if (flow) {
-  flow.addEventListener('click', (e) => {
-    const item = e.target.closest('.js-shot');
-    if (!item) return;
-    e.preventDefault();
-    item.classList.toggle('is-picked');
+(function () {
+  const root = document.getElementById('client-masonry');
+  if (!root) return;
+  const imgs = [...root.querySelectorAll('img')].slice(0, 8);
+  const ready = imgs.map((img) => img.complete ? Promise.resolve() : new Promise((done) => {
+    img.addEventListener('load', done, { once: true });
+    img.addEventListener('error', done, { once: true });
+  }));
+  Promise.all(ready).then(() => {
+    requestAnimationFrame(() => root.classList.remove('is-pending'));
   });
-  flow.addEventListener('dblclick', (e) => {
-    const item = e.target.closest('.js-shot');
-    if (!item) return;
-    openLightbox(Number(item.dataset.idx || 0));
-  });
-
-  const rows = flow.querySelectorAll('.js-sort-row');
-  const targets = rows.length ? [...rows] : [flow];
-  targets.forEach((row) => {
-    new Sortable(row, {
-      animation: 160,
-      draggable: '.js-shot',
-      group: 'gallery-photos',
-      onEnd(evt) {
-        const moved = evt.item;
-        const picked = [...flow.querySelectorAll('.js-shot.is-picked')];
-        if (picked.length > 1 && moved.classList.contains('is-picked')) {
-          picked.filter(el => el !== moved).forEach(el => moved.after(el));
-        }
-        saveOrder();
-      }
-    });
-  });
-}
+  setTimeout(() => root.classList.remove('is-pending'), 1800);
+})();
 </script>
 {% endif %}
 {% endblock %}

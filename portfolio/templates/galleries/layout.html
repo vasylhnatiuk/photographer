@@ -4,7 +4,7 @@
 {% block site_cta %}{% endblock %}
 {% block content %}
 <style>
-.layout-page{max-width:1280px;margin:0 auto;padding:120px 20px 80px}
+.layout-page{max-width:1480px;margin:0 auto;padding:120px 20px 80px}
 .top{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap}
 h1{font-size:40px;font-weight:400;margin:0}
 .hint{color:#777;font-size:13px;margin-top:6px}
@@ -14,28 +14,36 @@ h1{font-size:40px;font-weight:400;margin:0}
 .row-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#999;margin-bottom:8px}
 .slots-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .slots-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.slot{position:relative;background:#f3f1ee;border:1px dashed #ccc;min-height:180px;overflow:hidden;cursor:pointer}
+.slot{position:relative;background:#f3f1ee;border:1px dashed #ccc;min-height:216px;overflow:hidden;cursor:pointer}
 .slot.big{min-height:280px}
-.slot img{width:100%;height:100%;object-fit:cover;display:block;min-height:180px}
+.slot img{width:100%;height:100%;object-fit:cover;display:block;min-height:216px}
 .slot.big img{min-height:280px}
 .slot.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
 .slot.selected{outline:3px solid #111;outline-offset:-3px}
 .slot .clear{position:absolute;top:8px;right:8px;background:#111;color:#fff;border:0;border-radius:999px;width:26px;height:26px;cursor:pointer}
-.library{margin-top:40px}
-.library h2{font-size:22px;font-weight:400}
-.lib-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+.work{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px;align-items:start}
+.library{position:sticky;top:90px;height:calc(100vh - 120px);display:flex;flex-direction:column;border:1px solid #eee;border-radius:14px;background:#fafafa;min-width:0}
+.library h2{font-size:16px;font-weight:400;margin:0;padding:14px 14px 0}
+.library .hint{padding:0 14px 10px}
+.lib-scroll{overflow-y:auto;padding:0 12px 16px;flex:1}
+.lib-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .lib-item{aspect-ratio:1;overflow:hidden;cursor:pointer;background:#eee;position:relative}
 .lib-item img{width:100%;height:100%;object-fit:cover}
 .lib-item.picked{outline:3px solid #111;outline-offset:-3px}
 .float{position:fixed;right:22px;bottom:22px;z-index:40;box-shadow:0 12px 30px rgba(0,0,0,.2)}
-@media(max-width:800px){.slots-3,.lib-grid{grid-template-columns:repeat(2,1fr)}.slots-2{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .work{grid-template-columns:1fr}
+  .library{position:relative;top:0;height:280px}
+  .slots-3{grid-template-columns:repeat(2,1fr)}
+  .slots-2{grid-template-columns:1fr}
+}
 </style>
 <div class="layout-page">
   <div class="top">
     <div>
       <div class="hint">General gallery layout</div>
       <h1>{{ gallery.title }}</h1>
-      <p class="hint">40 slots. 3 verticals, then one wide, then two, then one wide. Click a photo below, then click a slot. Click a filled slot to move it.</p>
+      <p class="hint">40 slots. Click a photo on the right, then a slot. 3 verticals, then one wide, then two.</p>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <a class="btn" href="{% url 'gallery_edit' gallery.slug %}">← Edit details</a>
@@ -44,6 +52,15 @@ h1{font-size:40px;font-weight:400;margin:0}
     </div>
   </div>
 
+  <form method="post" action="{% url 'gallery_edit' gallery.slug %}" enctype="multipart/form-data" style="display:flex;gap:12px;align-items:center;margin-bottom:28px;flex-wrap:wrap">
+    {% csrf_token %}
+    <input type="hidden" name="upload_photos" value="1">
+    <input type="hidden" name="next" value="{% url 'gallery_layout' gallery.slug %}">
+    <input type="file" name="photos" accept="image/*" multiple>
+    <button class="btn dark" type="submit">Upload photos here</button>
+  </form>
+
+  <div class="work">
   <div class="grid-wrap" id="board">
     {% for row in rows %}
       <div>
@@ -52,9 +69,9 @@ h1{font-size:40px;font-weight:400;margin:0}
         </div>
         <div class="{% if row.kind == 'trio' %}slots-3{% elif row.kind == 'pair' %}slots-2{% endif %}">
           {% for photo in row.cells %}
-            <div class="slot {% if row.kind == 'big' %}big{% endif %} {% if not photo %}empty{% endif %}" data-index="{{ row.start|add:forloop.counter0 }}" data-id="{% if photo %}{{ photo.id }}{% endif %}">
+            <div class="slot {% if row.kind == 'big' %}big{% endif %} {% if not photo %}empty{% endif %}" data-index="{{ row.start|add:forloop.counter0 }}" data-id="{% if photo %}{{ photo.id }}{% endif %}" data-x="{{ photo.focus_x|default:50 }}" data-y="{{ photo.focus_y|default:50 }}" data-z="{{ photo.focus_z|default:100 }}">
               {% if photo %}
-                <img src="{{ photo.image.url }}" alt="">
+                <img src="{{ photo.image.url }}" alt="" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
                 <button type="button" class="clear" title="Clear">×</button>
               {% else %}
                 Add photo
@@ -66,17 +83,27 @@ h1{font-size:40px;font-weight:400;margin:0}
     {% endfor %}
   </div>
 
-  <section class="library">
+  <aside class="library">
     <h2>Your photos</h2>
-    <p class="hint">Click one, then click an empty or filled slot to place it.</p>
-    <div class="lib-grid">
-      {% for photo in library %}
-        <div class="lib-item" data-id="{{ photo.id }}" data-src="{{ photo.image.url }}">
-          <img src="{{ photo.image.url }}" alt="" loading="lazy">
-        </div>
-      {% endfor %}
+    <p class="hint">Click photo, then a slot. Select a filled slot to crop.</p>
+    <div id="focus-box" style="display:none;padding:0 14px 12px">
+      <label class="hint" style="display:block">Zoom <input id="focus-z" type="range" min="100" max="180" value="100" style="width:100%"></label>
+      <label class="hint" style="display:block">Left / right <input id="focus-x" type="range" min="0" max="100" value="50" style="width:100%"></label>
+      <label class="hint" style="display:block">Up / down <input id="focus-y" type="range" min="0" max="100" value="50" style="width:100%"></label>
     </div>
-  </section>
+    <div class="lib-scroll">
+      <div class="lib-grid">
+        {% for photo in library %}
+          <div class="lib-item" data-id="{{ photo.id }}" data-src="{{ photo.image.url }}">
+            <img src="{{ photo.image.url }}" alt="" loading="lazy">
+          </div>
+        {% empty %}
+          <p class="hint">Upload photos first.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </aside>
+  </div>
 </div>
 <button class="btn dark float" type="button" id="save-btn-2">Save layout</button>
 
@@ -87,15 +114,31 @@ let pickedId = null;
 let pickedSrc = '';
 const slots = [...document.querySelectorAll('.slot')];
 
+function applyFocus(slot) {
+  const img = slot.querySelector('img');
+  if (!img) return;
+  const x = slot.dataset.x || 50;
+  const y = slot.dataset.y || 50;
+  const z = slot.dataset.z || 100;
+  img.style.objectPosition = x + '% ' + y + '%';
+  img.style.transformOrigin = x + '% ' + y + '%';
+  img.style.transform = 'scale(' + (Number(z)/100) + ')';
+}
 function renderSlot(slot, id, src) {
   slot.dataset.id = id || '';
+  if (!slot.dataset.x) slot.dataset.x = '50';
+  if (!slot.dataset.y) slot.dataset.y = '50';
+  if (!slot.dataset.z) slot.dataset.z = '100';
   if (id && src) {
     slot.classList.remove('empty');
     slot.innerHTML = '<img src="'+src+'" alt=""><button type="button" class="clear">×</button>';
+    applyFocus(slot);
   } else {
     slot.classList.add('empty');
-    slot.removeAttribute('data-id');
     slot.dataset.id = '';
+    slot.dataset.x = '50';
+    slot.dataset.y = '50';
+    slot.dataset.z = '100';
     slot.textContent = 'Add photo';
   }
 }
@@ -115,25 +158,64 @@ document.getElementById('board').addEventListener('click', (e) => {
   if (clear && slot) {
     e.stopPropagation();
     renderSlot(slot, null, '');
+    document.querySelectorAll('.slot.selected').forEach(el => el.classList.remove('selected'));
+    focusBox.style.display = 'none';
     return;
   }
   if (!slot) return;
+  document.querySelectorAll('.slot.selected').forEach(el => el.classList.remove('selected'));
   if (pickedId) {
+    const keep = (String(slot.dataset.id) === String(pickedId));
+    if (!keep) {
+      slot.dataset.x = '50';
+      slot.dataset.y = '50';
+      slot.dataset.z = '100';
+    }
     renderSlot(slot, pickedId, pickedSrc);
+    pickedId = null;
+    pickedSrc = '';
+    document.querySelectorAll('.lib-item.picked').forEach(el => el.classList.remove('picked'));
+    slot.classList.add('selected');
+    showFocus(slot);
     return;
   }
   if (slot.dataset.id) {
-    pickedId = slot.dataset.id;
-    pickedSrc = slot.querySelector('img') ? slot.querySelector('img').src : '';
-    document.querySelectorAll('.lib-item.picked').forEach(el => el.classList.remove('picked'));
-    const lib = document.querySelector('.lib-item[data-id="'+pickedId+'"]');
-    if (lib) lib.classList.add('picked');
     slot.classList.add('selected');
+    showFocus(slot);
   }
 });
 
+const focusBox = document.getElementById('focus-box');
+const fx = document.getElementById('focus-x');
+const fy = document.getElementById('focus-y');
+const fz = document.getElementById('focus-z');
+function showFocus(slot) {
+  focusBox.style.display = 'block';
+  fx.value = slot.dataset.x || 50;
+  fy.value = slot.dataset.y || 50;
+  fz.value = slot.dataset.z || 100;
+  focusBox.dataset.slot = slot.dataset.index;
+}
+let saveTimer = null;
+function bindFocus(input, key) {
+  input.addEventListener('input', () => {
+    const slot = document.querySelector('.slot.selected');
+    if (!slot) return;
+    slot.dataset[key] = input.value;
+    applyFocus(slot);
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 400);
+  });
+}
+bindFocus(fx, 'x'); bindFocus(fy, 'y'); bindFocus(fz, 'z');
+
 function currentSlots() {
-  return slots.map(slot => slot.dataset.id ? Number(slot.dataset.id) : null);
+  return slots.map(slot => slot.dataset.id ? {
+    id: Number(slot.dataset.id),
+    x: Number(slot.dataset.x || 50),
+    y: Number(slot.dataset.y || 50),
+    z: Number(slot.dataset.z || 100)
+  } : null);
 }
 
 function save() {
