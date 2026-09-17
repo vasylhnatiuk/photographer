@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Layout — {{ gallery.title }}{% endblock %}
+{% block promo %}{% endblock %}
+{% block site_cta %}{% endblock %}
+{% block content %}
+<style>
+.layout-page{max-width:1280px;margin:0 auto;padding:120px 20px 80px}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap}
+h1{font-size:40px;font-weight:400;margin:0}
+.hint{color:#777;font-size:13px;margin-top:6px}
+.btn{display:inline-flex;align-items:center;border:1px solid #111;border-radius:999px;padding:10px 16px;text-decoration:none;color:#111;background:#fff;cursor:pointer;font:inherit}
+.btn.dark{background:#111;color:#fff}
+.grid-wrap{display:grid;gap:22px}
+.row-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#999;margin-bottom:8px}
+.slots-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.slots-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.slot{position:relative;background:#f3f1ee;border:1px dashed #ccc;min-height:180px;overflow:hidden;cursor:pointer}
+.slot.big{min-height:280px}
+.slot img{width:100%;height:100%;object-fit:cover;display:block;min-height:180px}
+.slot.big img{min-height:280px}
+.slot.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.slot.selected{outline:3px solid #111;outline-offset:-3px}
+.slot .clear{position:absolute;top:8px;right:8px;background:#111;color:#fff;border:0;border-radius:999px;width:26px;height:26px;cursor:pointer}
+.library{margin-top:40px}
+.library h2{font-size:22px;font-weight:400}
+.lib-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+.lib-item{aspect-ratio:1;overflow:hidden;cursor:pointer;background:#eee;position:relative}
+.lib-item img{width:100%;height:100%;object-fit:cover}
+.lib-item.picked{outline:3px solid #111;outline-offset:-3px}
+.float{position:fixed;right:22px;bottom:22px;z-index:40;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+@media(max-width:800px){.slots-3,.lib-grid{grid-template-columns:repeat(2,1fr)}.slots-2{grid-template-columns:1fr}}
+</style>
+<div class="layout-page">
+  <div class="top">
+    <div>
+      <div class="hint">General gallery layout</div>
+      <h1>{{ gallery.title }}</h1>
+      <p class="hint">40 slots. 3 verticals, then one wide, then two, then one wide. Click a photo below, then click a slot. Click a filled slot to move it.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn" href="{% url 'gallery_edit' gallery.slug %}">← Edit details</a>
+      <a class="btn" href="{% url 'client_gallery' gallery.slug %}" target="_blank">View ↗</a>
+      <button class="btn dark" type="button" id="save-btn">Save layout</button>
+    </div>
+  </div>
+
+  <div class="grid-wrap" id="board">
+    {% for row in rows %}
+      <div>
+        <div class="row-label">
+          {% if row.kind == 'trio' %}3 vertical{% elif row.kind == 'pair' %}2 side by side{% else %}1 wide{% endif %}
+        </div>
+        <div class="{% if row.kind == 'trio' %}slots-3{% elif row.kind == 'pair' %}slots-2{% endif %}">
+          {% for photo in row.cells %}
+            <div class="slot {% if row.kind == 'big' %}big{% endif %} {% if not photo %}empty{% endif %}" data-index="{{ row.start|add:forloop.counter0 }}" data-id="{% if photo %}{{ photo.id }}{% endif %}">
+              {% if photo %}
+                <img src="{{ photo.image.url }}" alt="">
+                <button type="button" class="clear" title="Clear">×</button>
+              {% else %}
+                Add photo
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <section class="library">
+    <h2>Your photos</h2>
+    <p class="hint">Click one, then click an empty or filled slot to place it.</p>
+    <div class="lib-grid">
+      {% for photo in library %}
+        <div class="lib-item" data-id="{{ photo.id }}" data-src="{{ photo.image.url }}">
+          <img src="{{ photo.image.url }}" alt="" loading="lazy">
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+<button class="btn dark float" type="button" id="save-btn-2">Save layout</button>
+
+<form id="save-form" method="post" style="display:none">{% csrf_token %}<input type="hidden" name="slots" id="slots-field"></form>
+<script>
+const csrf = '{{ csrf_token }}';
+let pickedId = null;
+let pickedSrc = '';
+const slots = [...document.querySelectorAll('.slot')];
+
+function renderSlot(slot, id, src) {
+  slot.dataset.id = id || '';
+  if (id && src) {
+    slot.classList.remove('empty');
+    slot.innerHTML = '<img src="'+src+'" alt=""><button type="button" class="clear">×</button>';
+  } else {
+    slot.classList.add('empty');
+    slot.removeAttribute('data-id');
+    slot.dataset.id = '';
+    slot.textContent = 'Add photo';
+  }
+}
+
+document.querySelectorAll('.lib-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.lib-item.picked').forEach(el => el.classList.remove('picked'));
+    item.classList.add('picked');
+    pickedId = item.dataset.id;
+    pickedSrc = item.dataset.src;
+  });
+});
+
+document.getElementById('board').addEventListener('click', (e) => {
+  const clear = e.target.closest('.clear');
+  const slot = e.target.closest('.slot');
+  if (clear && slot) {
+    e.stopPropagation();
+    renderSlot(slot, null, '');
+    return;
+  }
+  if (!slot) return;
+  if (pickedId) {
+    renderSlot(slot, pickedId, pickedSrc);
+    return;
+  }
+  if (slot.dataset.id) {
+    pickedId = slot.dataset.id;
+    pickedSrc = slot.querySelector('img') ? slot.querySelector('img').src : '';
+    document.querySelectorAll('.lib-item.picked').forEach(el => el.classList.remove('picked'));
+    const lib = document.querySelector('.lib-item[data-id="'+pickedId+'"]');
+    if (lib) lib.classList.add('picked');
+    slot.classList.add('selected');
+  }
+});
+
+function currentSlots() {
+  return slots.map(slot => slot.dataset.id ? Number(slot.dataset.id) : null);
+}
+
+function save() {
+  const payload = JSON.stringify(currentSlots());
+  document.getElementById('slots-field').value = payload;
+  fetch(location.href, {
+    method: 'POST',
+    headers: {'X-CSRFToken': csrf, 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({slots: payload, csrfmiddlewaretoken: csrf})
+  }).then(r => {
+    if (!r.ok) throw new Error();
+    const btn = document.getElementById('save-btn');
+    btn.textContent = 'Saved';
+    setTimeout(() => btn.textContent = 'Save layout', 1200);
+  }).catch(() => alert('Could not save layout'));
+}
+document.getElementById('save-btn').addEventListener('click', save);
+document.getElementById('save-btn-2').addEventListener('click', save);
+</script>
+{% endblock %}
