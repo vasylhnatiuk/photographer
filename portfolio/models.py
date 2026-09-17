@@ -185,7 +185,7 @@ class ShowcasePhoto(models.Model):
 class Client(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(null=True, blank=True)
+    phone = models.CharField(null=True, blank=True, max_length=200)
     preferred_date = models.DateField(null=True, blank=True)
     preferred_time = models.TimeField(null=True, blank=True)
     message = models.TextField(blank=True)
