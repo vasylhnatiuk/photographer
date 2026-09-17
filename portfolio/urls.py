@@ -18,6 +18,7 @@ urlpatterns = [
     path('client-galleries/showcase/reorder/', views.showcase_reorder, name='showcase_reorder'),
     path('client-galleries/photo/<int:photo_id>/delete/', views.gallery_delete_photo, name='gallery_delete_photo'),
     path('client-galleries/<slug:slug>/reorder/', views.gallery_reorder, name='gallery_reorder'),
+    path('client-galleries/<slug:slug>/layout/', views.gallery_layout, name='gallery_layout'),
     path('client-galleries/<slug:slug>/', views.gallery_edit, name='gallery_edit'),
 
     # Public gallery

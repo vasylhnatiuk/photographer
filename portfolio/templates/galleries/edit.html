@@ -63,6 +63,7 @@
     <div><div class="eyebrow">Editing {{ gallery.gallery_type|title }}</div><h1>{{ gallery.title }}</h1></div>
     <div class="actions">
       <a class="secondary-btn" href="{% url 'client_gallery' gallery.slug %}" target="_blank">View gallery ↗</a>
+      {% if gallery.is_showcase %}<a class="secondary-btn" href="{% url 'gallery_layout' gallery.slug %}">Edit layout</a>{% endif %}
       <a class="secondary-btn" href="{% url 'gallery_manager' %}">← Manager</a>
     </div>
   </div>
@@ -95,7 +96,10 @@
       <div class="settings-box">
         <strong style="display:block;margin-bottom:12px">Settings</strong>
         <label style="display:flex;align-items:center;gap:10px;margin:10px 0">{{ form.is_private }} Private gallery</label>
-        <small style="display:block;color:#777;margin:-5px 0 12px 28px">Private = hidden from the public Love Stories page. The direct link remains available.</small>
+        <small style="display:block;color:#777;margin:-5px 0 12px 28px">Private = hidden from Love Stories. Visitors need the password to see photos.</small>
+        <label>Gallery password {{ form.access_password }}
+          <small style="color:#777">Default is 1212.</small>
+        </label>
         <label style="display:flex;align-items:center;gap:10px;margin:10px 0">{{ form.allow_downloads }} Allow full-resolution downloads</label>
       </div>
 

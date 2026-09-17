@@ -205,6 +205,46 @@ def gallery_edit(request, slug):
     })
 
 
+@login_required
+def gallery_layout(request, slug):
+    gallery = get_object_or_404(Album, slug=slug)
+    if not gallery.is_showcase:
+        return redirect('gallery_edit', slug=gallery.slug)
+
+    library = list(_all_photo_queryset())
+    by_id = {photo.id: photo for photo in library}
+    slot_ids = _normalize_slots(gallery.layout_slots)
+    if not any(slot_ids):
+        existing = list(
+            gallery.showcase_items.order_by('order', 'id').values_list('photo_id', flat=True)
+        )
+        slot_ids = _normalize_slots(existing)
+
+    if request.method == 'POST':
+        raw = request.POST.get('slots') or '[]'
+        try:
+            incoming = json.loads(raw)
+        except json.JSONDecodeError:
+            incoming = []
+        slot_ids = _normalize_slots(incoming)
+        gallery.layout_slots = slot_ids
+        gallery.save(update_fields=['layout_slots'])
+        filled = [photo_id for photo_id in slot_ids if photo_id]
+        _save_showcase_selection(gallery, filled)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': True})
+        return redirect('gallery_layout', slug=gallery.slug)
+
+    rows = _layout_rows(slot_ids, by_id)
+    return render(request, 'galleries/layout.html', {
+        'gallery': gallery,
+        'rows': rows,
+        'library': library,
+        'slot_ids': slot_ids,
+        'slot_count': LAYOUT_SLOT_COUNT,
+    })
+
+
 def _client_photo_queryset():
     return (
         Photo.objects
@@ -341,6 +381,67 @@ def client_galleries_reorder(request):
     return JsonResponse({'ok': True})
 
 
+LAYOUT_SLOT_COUNT = 40
+LAYOUT_PATTERN = [3, 1, 2, 1]
+
+
+def _kind_for_size(size):
+    if size == 1:
+        return 'big'
+    if size == 2:
+        return 'pair'
+    return 'trio'
+
+
+def _normalize_slots(raw, size=LAYOUT_SLOT_COUNT):
+    slots = list(raw or [])
+    cleaned = []
+    for item in slots[:size]:
+        try:
+            cleaned.append(int(item) if item not in (None, '', 0) else None)
+        except (TypeError, ValueError):
+            cleaned.append(None)
+    while len(cleaned) < size:
+        cleaned.append(None)
+    return cleaned
+
+
+def _photos_from_slots(slot_ids):
+    ids = [photo_id for photo_id in slot_ids if photo_id]
+    by_id = {photo.id: photo for photo in Photo.objects.filter(id__in=ids)}
+    photos = []
+    for index, photo_id in enumerate(slot_ids):
+        photo = by_id.get(photo_id)
+        if not photo:
+            continue
+        photo.idx = len(photos)
+        photo.slot = index
+        photos.append(photo)
+    return photos
+
+
+def _layout_rows(slot_ids, photos_by_id=None):
+    if photos_by_id is None:
+        ids = [photo_id for photo_id in slot_ids if photo_id]
+        photos_by_id = {photo.id: photo for photo in Photo.objects.filter(id__in=ids)}
+    rows = []
+    i = 0
+    step = 0
+    while i < len(slot_ids):
+        size = LAYOUT_PATTERN[step % len(LAYOUT_PATTERN)]
+        chunk_ids = slot_ids[i:i + size]
+        cells = []
+        for photo_id in chunk_ids:
+            photo = photos_by_id.get(photo_id) if photo_id else None
+            cells.append(photo)
+        while len(cells) < size:
+            cells.append(None)
+        rows.append({'kind': _kind_for_size(size), 'cells': cells, 'start': i})
+        i += size
+        step += 1
+    return rows
+
+
 def _portrait_rows(photos):
     photos = list(photos)
     rows = []
@@ -364,21 +465,42 @@ def _portrait_rows(photos):
 
 def client_gallery(request, slug):
     gallery = get_object_or_404(Album, slug=slug)
+    session_key = f'gallery_unlocked_{gallery.pk}'
+    password_error = ''
+    unlocked = (not gallery.is_private) or request.user.is_authenticated or request.session.get(session_key)
 
+    if gallery.is_private and request.method == 'POST' and 'gallery_password' in request.POST:
+        expected = (gallery.access_password or '1212').strip()
+        given = (request.POST.get('gallery_password') or '').strip()
+        if given == expected:
+            request.session[session_key] = True
+            return redirect('client_gallery', slug=gallery.slug)
+        password_error = 'Wrong password.'
+
+    layout_rows = None
     if gallery.is_showcase:
-        items = gallery.showcase_items.select_related('photo', 'photo__album').order_by('order', 'id')
-        photos = [item.photo for item in items]
+        slot_ids = _normalize_slots(gallery.layout_slots)
+        if any(slot_ids):
+            photos = _photos_from_slots(slot_ids)
+            layout_rows = _layout_rows(slot_ids)
+        else:
+            items = gallery.showcase_items.select_related('photo', 'photo__album').order_by('order', 'id')
+            photos = [item.photo for item in items]
+            for index, photo in enumerate(photos):
+                photo.idx = index
     else:
         photos = list(gallery.photos.all())
-
-    for index, photo in enumerate(photos):
-        photo.idx = index
+        for index, photo in enumerate(photos):
+            photo.idx = index
 
     return render(request, 'galleries/client.html', {
         'gallery': gallery,
         'photos': photos,
-        'rows': _portrait_rows(photos),
-        'can_reorder': request.user.is_authenticated,
+        'rows': layout_rows or _portrait_rows(photos),
+        'can_reorder': request.user.is_authenticated and unlocked and not layout_rows,
+        'gallery_locked': gallery.is_private and not unlocked,
+        'password_error': password_error,
+        'use_slots': bool(layout_rows),
     })
 
 

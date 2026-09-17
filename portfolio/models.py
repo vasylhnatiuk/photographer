@@ -72,9 +72,11 @@ class Album(models.Model):
         blank=True,
     )
     display_order = models.PositiveIntegerField(default=0, db_index=True)
+    layout_slots = models.JSONField(default=list, blank=True)
 
     # Visibility / client permissions
     is_private = models.BooleanField(default=True)
+    access_password = models.CharField(max_length=80, default='1212', blank=True)
     allow_downloads = models.BooleanField(default=True)
 
     # Main cover used on the client gallery hero.

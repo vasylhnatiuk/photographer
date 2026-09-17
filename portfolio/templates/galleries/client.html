@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}{{ gallery.title }} — Vasyl Hnatiuk Photography{% endblock %}
+{% block promo %}{% if not gallery.is_private %}{{ block.super }}{% endif %}{% endblock %}
+{% block site_cta %}{% if not gallery.is_private %}{{ block.super }}{% endif %}{% endblock %}
 {% block content %}
 
 <style>
@@ -139,6 +141,20 @@
 .end-name { font-family: "Cormorant Garamond", Georgia, serif; font-size: 34px; }
 .end-sub { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: #888; margin-top: 8px; }
 
+.photos-blurred img { filter: blur(18px) saturate(.7); transform: scale(1.06); pointer-events: none; user-select: none; }
+.lock-card {
+  max-width: 420px; margin: 28px auto 0; padding: 28px 24px; text-align: center;
+  background: #fff; border: 1px solid #eee; border-radius: 16px;
+}
+.lock-card input {
+  width: 100%; box-sizing: border-box; font: inherit; border: 1px solid #ddd;
+  border-radius: 10px; padding: 12px; margin: 12px 0;
+}
+.lock-card button {
+  border: 1px solid #111; background: #111; color: #fff; border-radius: 999px;
+  padding: 11px 18px; cursor: pointer; font: inherit;
+}
+.lock-error { color: #a00; font-size: 13px; }
 @keyframes heroIn { to { opacity: 1; transform: scale(1); } }
 @keyframes zoom { to { transform: scale(1.045); } }
 
@@ -155,14 +171,13 @@
 <section class="hero">
   <img src="{{ gallery.cover.url }}" alt="{{ gallery.title }}">
   <div class="top">
-    <a href="{% url 'weddings' %}">All galleries</a>
-    <span>{{ photos|length }} photographs</span>
+    {% if not gallery.is_private %}<a href="{% url 'weddings' %}">All galleries</a>{% else %}<span>Private gallery</span>{% endif %}
+    <span>{% if gallery_locked %}Locked{% else %}{{ photos|length }} photographs{% endif %}</span>
   </div>
   <div class="hero-content">
     <div class="eyebrow">{% if gallery.is_showcase %}Portfolio Gallery{% else %}Client Gallery{% endif %}</div>
     <h1 class="hero-title-xl">{{ gallery.title }}</h1>
-    <br>        </br>
-<!--    {% if gallery.client_name %}<div class="hero-client">{{ gallery.client_name }}</div>{% endif %}-->
+    {% if gallery.client_name %}<div class="hero-client">{{ gallery.client_name }}</div>{% endif %}
     {% if gallery.description %}<div class="hero-desc">{{ gallery.description }}</div>{% endif %}
   </div>
   <div class="scroll">Scroll<i></i></div>
@@ -170,44 +185,67 @@
 {% endif %}
 
 <div class="actions">
+  {% if not gallery.is_private %}
   <a href="{% url 'weddings' %}">All galleries</a>
+  {% endif %}
   {% if can_reorder %}
     <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#888">Admin: click several photos, then drag</span>
     <a href="{% url 'gallery_edit' gallery.slug %}">Edit gallery</a>
   {% endif %}
-  {% if gallery.allow_downloads and gallery.lightroom_url %}
+  {% if gallery.allow_downloads and gallery.lightroom_url and not gallery_locked %}
     <a href="{{ gallery.lightroom_url }}" target="_blank" rel="noopener noreferrer">Download full-resolution photos</a>
   {% endif %}
 </div>
 
+{% if gallery_locked %}
+<div class="lock-card">
+  <p style="margin:0 0 8px;letter-spacing:.16em;text-transform:uppercase;font-size:10px;color:#888">Private gallery</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="password" name="gallery_password" placeholder="Password" autofocus>
+    {% if password_error %}<p class="lock-error">{{ password_error }}</p>{% endif %}
+    <button type="submit">View photos</button>
+  </form>
+</div>
+<div class="photos-blurred">
+{% endif %}
+
 {% if gallery.is_showcase %}
 <section id="gallery-flow" class="max-w-6xl mx-auto px-4 py-16 space-y-10">
   {% for row in rows %}
+    {% with items=row.cells|default:row.photos %}
     {% if row.kind == 'trio' %}
       <div class="js-sort-row grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {% for photo in row.photos %}
+        {% for photo in items %}
+          {% if photo %}
           <div class="js-shot cursor-pointer overflow-hidden group relative" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(!window.canReorder) openLightbox({{ photo.idx }})">
             <img src="{{ photo.image.url }}" alt="" class="h-[400px] w-full object-cover group-hover:scale-105 transition duration-700">
           </div>
+          {% endif %}
         {% endfor %}
       </div>
     {% elif row.kind == 'pair' %}
       <div class="js-sort-row grid grid-cols-1 md:grid-cols-2 gap-4">
-        {% for photo in row.photos %}
+        {% for photo in items %}
+          {% if photo %}
           <div class="js-shot cursor-pointer overflow-hidden group relative" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(!window.canReorder) openLightbox({{ photo.idx }})">
             <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[450px] w-full object-cover group-hover:scale-105 transition duration-700">
           </div>
+          {% endif %}
         {% endfor %}
       </div>
     {% else %}
       <div class="js-sort-row">
-      {% for photo in row.photos %}
+      {% for photo in items %}
+        {% if photo %}
         <div class="js-shot cursor-pointer overflow-hidden group relative" data-id="{{ photo.id }}" data-idx="{{ photo.idx }}" onclick="if(!window.canReorder) openLightbox({{ photo.idx }})">
           <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[600px] w-full object-cover group-hover:scale-105 transition duration-700">
         </div>
+        {% endif %}
       {% endfor %}
       </div>
     {% endif %}
+    {% endwith %}
   {% empty %}
     <p class="text-center text-gray-400">No photos in this gallery yet.</p>
   {% endfor %}
@@ -229,7 +267,7 @@
 .js-shot.is-picked{outline:3px solid #111;outline-offset:-3px}
 {% if can_reorder %}.js-shot{cursor:grab !important}{% endif %}
 </style>
-
+{% if gallery_locked %}</div>{% endif %}
 <footer class="end">
   <div class="end-name">Vasyl Hnatiuk</div>
   <div class="end-sub">Photography · New York City</div>
