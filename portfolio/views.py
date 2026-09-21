@@ -599,3 +599,7 @@ def download_all_photos(request, slug):
     response = HttpResponse(archive.read(), content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="{safe_name}-photos.zip"'
     return response
+
+
+def home(request):
+    return render(request, 'home.html')
