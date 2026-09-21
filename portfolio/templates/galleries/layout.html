@@ -10,14 +10,14 @@ h1{font-size:40px;font-weight:400;margin:0}
 .hint{color:#777;font-size:13px;margin-top:6px}
 .btn{display:inline-flex;align-items:center;border:1px solid #111;border-radius:999px;padding:10px 16px;text-decoration:none;color:#111;background:#fff;cursor:pointer;font:inherit}
 .btn.dark{background:#111;color:#fff}
-.grid-wrap{display:grid;gap:22px}
+.grid-wrap{display:grid;gap:40px}
 .row-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#999;margin-bottom:8px}
-.slots-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.slots-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.slot{position:relative;background:#f3f1ee;border:1px dashed #ccc;min-height:216px;overflow:hidden;cursor:pointer}
-.slot.big{min-height:280px}
-.slot img{width:100%;height:100%;object-fit:cover;display:block;min-height:216px}
-.slot.big img{min-height:280px}
+.slots-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.slots-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.slot{position:relative;background:#f3f1ee;border:1px dashed #ccc;height:480px;overflow:hidden;cursor:pointer}
+.slot.pair{height:540px}
+.slot.big{height:600px}
+.slot img{width:100%;height:100%;object-fit:cover;display:block}
 .slot.empty{display:flex;align-items:center;justify-content:center;color:#bbb;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
 .slot.selected{outline:3px solid #111;outline-offset:-3px}
 .slot .clear{position:absolute;top:8px;right:8px;background:#111;color:#fff;border:0;border-radius:999px;width:26px;height:26px;cursor:pointer}
@@ -35,8 +35,9 @@ h1{font-size:40px;font-weight:400;margin:0}
 @media(max-width:900px){
   .work{grid-template-columns:1fr}
   .library{position:relative;top:0;height:280px}
-  .slots-3{grid-template-columns:repeat(2,1fr)}
-  .slots-2{grid-template-columns:1fr}
+  .slots-3,.slots-2{grid-template-columns:1fr}
+  .slot,.slot.pair{height:480px}
+  .slot.big{height:400px}
 }
 </style>
 <div class="layout-page">
@@ -71,7 +72,7 @@ h1{font-size:40px;font-weight:400;margin:0}
         </div>
         <div class="{% if row.kind == 'trio' %}slots-3{% elif row.kind == 'pair' %}slots-2{% endif %}">
           {% for photo in row.cells %}
-            <div class="slot {% if row.kind == 'big' %}big{% endif %} {% if not photo %}empty{% endif %}" data-index="{{ row.start|add:forloop.counter0 }}" data-id="{% if photo %}{{ photo.id }}{% endif %}" data-x="{{ photo.focus_x|default:50 }}" data-y="{{ photo.focus_y|default:50 }}" data-z="{{ photo.focus_z|default:100 }}">
+            <div class="slot {% if row.kind == 'big' %}big{% elif row.kind == 'pair' %}pair{% endif %} {% if not photo %}empty{% endif %}" data-index="{{ row.start|add:forloop.counter0 }}" data-id="{% if photo %}{{ photo.id }}{% endif %}" data-x="{{ photo.focus_x|default:50 }}" data-y="{{ photo.focus_y|default:50 }}" data-z="{{ photo.focus_z|default:100 }}">
               {% if photo %}
                 <img src="{{ photo.image.url }}" alt="" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
                 <button type="button" class="clear" title="Clear">×</button>
