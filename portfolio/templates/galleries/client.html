@@ -93,8 +93,12 @@
     <a href="{% url 'gallery_edit' gallery.slug %}">Edit gallery</a>
     {% if gallery.is_showcase %}<a href="{% url 'gallery_layout' gallery.slug %}">Edit layout</a>{% endif %}
   {% endif %}
-  {% if gallery.allow_downloads and gallery.lightroom_url %}
-    <a href="{{ gallery.lightroom_url }}" target="_blank" rel="noopener noreferrer">Download full-resolution photos</a>
+  {% if gallery.allow_downloads %}
+    {% if gallery.lightroom_url %}
+      <a href="{{ gallery.lightroom_url }}" target="_blank" rel="noopener noreferrer">Download photos</a>
+    {% else %}
+      <a href="{% url 'download_all_photos' gallery.slug %}">Download photos</a>
+    {% endif %}
   {% endif %}
 </div>
 {% endif %}
@@ -123,7 +127,7 @@
     {% else %}
       {% for photo in row.photos %}
         <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
-          <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[600px] w-full object-cover group-hover:scale-105 transition duration-700">
+          <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[600px] w-full object-cover transition duration-700" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
         </div>
       {% endfor %}
     {% endif %}
