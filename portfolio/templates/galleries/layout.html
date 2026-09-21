@@ -30,6 +30,7 @@ h1{font-size:40px;font-weight:400;margin:0}
 .lib-item{aspect-ratio:1;overflow:hidden;cursor:pointer;background:#eee;position:relative}
 .lib-item img{width:100%;height:100%;object-fit:cover}
 .lib-item.picked{outline:3px solid #111;outline-offset:-3px}
+.lib-item.in-use:after{content:'In layout';position:absolute;left:6px;bottom:6px;background:#111;color:#fff;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:3px 6px}
 .float{position:fixed;right:22px;bottom:22px;z-index:40;box-shadow:0 12px 30px rgba(0,0,0,.2)}
 @media(max-width:900px){
   .work{grid-template-columns:1fr}
@@ -48,6 +49,7 @@ h1{font-size:40px;font-weight:400;margin:0}
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <a class="btn" href="{% url 'gallery_edit' gallery.slug %}">← Edit details</a>
       <a class="btn" href="{% url 'client_gallery' gallery.slug %}" target="_blank">View ↗</a>
+      <button class="btn" type="button" id="clear-all">Clear all photos</button>
       <button class="btn dark" type="button" id="save-btn">Save layout</button>
     </div>
   </div>
@@ -141,6 +143,7 @@ function renderSlot(slot, id, src) {
     slot.dataset.z = '100';
     slot.textContent = 'Add photo';
   }
+  markUsed();
 }
 
 document.querySelectorAll('.lib-item').forEach(item => {
@@ -209,6 +212,12 @@ function bindFocus(input, key) {
 }
 bindFocus(fx, 'x'); bindFocus(fy, 'y'); bindFocus(fz, 'z');
 
+function markUsed() {
+  const used = new Set(slots.map(s => s.dataset.id).filter(Boolean));
+  document.querySelectorAll('.lib-item').forEach(item => {
+    item.classList.toggle('in-use', used.has(item.dataset.id));
+  });
+}
 function currentSlots() {
   return slots.map(slot => slot.dataset.id ? {
     id: Number(slot.dataset.id),
@@ -234,5 +243,14 @@ function save() {
 }
 document.getElementById('save-btn').addEventListener('click', save);
 document.getElementById('save-btn-2').addEventListener('click', save);
+document.getElementById('clear-all').addEventListener('click', () => {
+  if (!confirm('Clear every slot in this layout?')) return;
+  slots.forEach(slot => renderSlot(slot, null, ''));
+  document.querySelectorAll('.slot.selected').forEach(el => el.classList.remove('selected'));
+  const box = document.getElementById('focus-box');
+  if (box) box.style.display = 'none';
+  save();
+});
+markUsed();
 </script>
 {% endblock %}
