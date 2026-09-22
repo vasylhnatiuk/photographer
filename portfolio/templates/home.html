@@ -399,6 +399,16 @@
     color: #f5f2ee;
     letter-spacing: 0.02em;
   }
+  .gallery-item__desc {
+    margin: .35rem 0 0;
+    font-size: .78rem;
+    font-weight: 300;
+    line-height: 1.45;
+    color: rgba(245,242,238,.72);
+    max-width: 28rem;
+  }
+  .gallery-item__meta { flex-wrap: wrap; }
+  .gallery-item__text { flex: 1; min-width: 0; }
 
   .gallery-item__arrow {
     width: 36px;
@@ -757,6 +767,7 @@
       <div class="gallery-item__overlay"></div>
       <div class="gallery-item__meta">
         <h3 class="gallery-item__title">{{ gallery.title }}</h3>
+        {% if gallery.description %}<p class="gallery-item__desc">{{ gallery.description }}</p>{% endif %}
       </div>
     </a>
     {% empty %}
