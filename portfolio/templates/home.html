@@ -284,7 +284,7 @@
   .gallery-section {
     max-width: 1440px;
     margin-inline: auto;
-    padding: 3.6rem 2rem 5rem; /* ↓ reduced ~40% */
+    padding: 3.6rem 2rem 5rem;
   }
 
   .gallery-header {
@@ -563,11 +563,11 @@
       </div>
       <h2 class="about-title">Hi! I’m Vasyl.</h2>
       <p class="about-lead">
-        I capture your life <em>cinematically and beautifully</em>. I photograph couples, weddings, portraits, and more.
+        I capture your life <em>cinematically and honestly</em>. I photograph couples, weddings, portraits, and more.
       </p>
     </div>
     <div class="about-image reveal reveal-delay-1">
-      <img src="{% static 'images/me1.jpg' %}" alt="Vasyl Hnatiuk">
+      <img src="{% static 'images/m2.jpg' %}" alt="Vasyl Hnatiuk">
     </div>
   </div>
 </section>
@@ -584,14 +584,19 @@
   <p class="carousel-label" style="position:relative;z-index:7;color:rgba(255,255,255,.55)">Selected work</p>
 
   <div class="carousel-track">
-
-    <!-- SET 1 -->
+    {% if carousel_photos %}
+      {% for photo in carousel_photos %}
+      <img loading="lazy" decoding="async" src="{% if photo.image %}{{ photo.image.url }}{% elif photo.file %}{{ photo.file.url }}{% elif photo.photo %}{{ photo.photo.url }}{% else %}{{ photo.url }}{% endif %}" alt="">
+      {% endfor %}
+      {% for photo in carousel_photos %}
+      <img loading="lazy" decoding="async" src="{% if photo.image %}{{ photo.image.url }}{% elif photo.file %}{{ photo.file.url }}{% elif photo.photo %}{{ photo.photo.url }}{% else %}{{ photo.url }}{% endif %}" alt="">
+      {% endfor %}
+    {% else %}
     <img src="{% static 'images/l1.jpg' %}" alt="">
     <img src="{% static 'images/l2.jpg' %}" alt="">
     <img src="{% static 'images/l3.jpg' %}" alt="">
     <img src="{% static 'images/l4.jpg' %}" alt="">
     <img src="{% static 'images/p3.jpg' %}" alt="">
-
     <img src="{% static 'images/l5.jpg' %}" alt="">
     <img src="{% static 'images/l6.jpg' %}" alt="">
     <img src="{% static 'images/l7.jpg' %}" alt="">
@@ -599,7 +604,6 @@
     <img src="{% static 'images/p6.jpg' %}" alt="">
     <img src="{% static 'images/w4.jpg' %}" alt="">
     <img src="{% static 'images/p7.jpg' %}" alt="">
-        <!-- PORTRAITS -->
     <img src="{% static 'images/p2.jpg' %}" alt="">
     <img src="{% static 'images/p4.jpg' %}" alt="">
     <img src="{% static 'images/l9.jpg' %}" alt="">
@@ -615,64 +619,31 @@
     <img src="{% static 'images/l19.jpg' %}" alt="">
     <img src="{% static 'images/l20.jpg' %}" alt="">
     <img src="{% static 'images/l21.jpg' %}" alt="">
-
-
     <img src="{% static 'images/p5.jpg' %}" alt="">
     <img src="{% static 'images/p8.jpg' %}" alt="">
     <img src="{% static 'images/p9.jpg' %}" alt="">
     <img src="{% static 'images/p10.jpg' %}" alt="">
-
-    <!-- WEDDINGS (ADDED) -->
-
-    <!-- DUPLICATE FOR LOOP -->
     <img src="{% static 'images/l1.jpg' %}" alt="">
     <img src="{% static 'images/p1.jpg' %}" alt="">
     <img src="{% static 'images/w1.jpg' %}" alt="">
-
-
-    <!-- SET 2 (duplicate for infinite loop) -->
-    <img src="{% static 'images/l1.jpg' %}"  alt="">
-    <img src="{% static 'images/p3.jpg' %}"  alt="">
-    <img src="{% static 'images/l7.jpg' %}"  alt="">
-    <img src="{% static 'images/l4.jpg' %}"  alt="">
-    <img src="{% static 'images/p5.jpg' %}"  alt="">
-    <img src="{% static 'images/p2.jpg' %}"  alt="">
-    <img src="{% static 'images/l2.jpg' %}"  alt="">
+    <img src="{% static 'images/l1.jpg' %}" alt="">
+    <img src="{% static 'images/p3.jpg' %}" alt="">
+    <img src="{% static 'images/l7.jpg' %}" alt="">
+    <img src="{% static 'images/l4.jpg' %}" alt="">
+    <img src="{% static 'images/p5.jpg' %}" alt="">
+    <img src="{% static 'images/p2.jpg' %}" alt="">
+    <img src="{% static 'images/l2.jpg' %}" alt="">
     <img src="{% static 'images/l10.jpg' %}" alt="">
-    <img src="{% static 'images/p4.jpg' %}"  alt="">
-    <img src="{% static 'images/l5.jpg' %}"  alt="">
-    <img src="{% static 'images/l3.jpg' %}"  alt="">
-    <img src="{% static 'images/p5.jpg' %}"  alt="">
-    <img src="{% static 'images/l6.jpg' %}"  alt="">
-
+    <img src="{% static 'images/p4.jpg' %}" alt="">
+    <img src="{% static 'images/l5.jpg' %}" alt="">
+    <img src="{% static 'images/l3.jpg' %}" alt="">
+    <img src="{% static 'images/p5.jpg' %}" alt="">
+    <img src="{% static 'images/l6.jpg' %}" alt="">
+    {% endif %}
   </div>
 
 </section>
 
-<section id="portfolio" class="gallery-section">
-  <div class="gallery-header reveal">
-    <span class="gallery-header__label">Portfolio</span>
-    <span class="gallery-header__index">01</span>
-  </div>
-  <div class="gallery-grid">
-    {% for gallery in portfolio_galleries %}
-    <a href="{% url 'client_gallery' gallery.slug %}" class="gallery-item reveal">
-      <img src="{% if gallery.cover %}{{ gallery.cover.url }}{% elif gallery.love_stories_cover %}{{ gallery.love_stories_cover.url }}{% else %}{% static 'images/love01.jpg' %}{% endif %}" alt="{{ gallery.title }}">
-      <div class="gallery-item__overlay"></div>
-      <div class="gallery-item__meta">
-        <h3 class="gallery-item__title">{{ gallery.title }}</h3>
-      </div>
-    </a>
-    {% empty %}
-    <a href="/love_stories/" class="gallery-item reveal"><img src="{% static 'images/love01.jpg' %}" alt=""><div class="gallery-item__overlay"></div><div class="gallery-item__meta"><h3 class="gallery-item__title">J&amp;J — Love story at The Met</h3></div></a>
-    <a href="/love_stories/" class="gallery-item reveal"><img src="{% static 'images/l2.jpg' %}" alt=""><div class="gallery-item__overlay"></div><div class="gallery-item__meta"><h3 class="gallery-item__title">Central Park proposal</h3></div></a>
-    <a href="/portraits/" class="gallery-item reveal"><img src="{% static 'images/p1.jpg' %}" alt=""><div class="gallery-item__overlay"></div><div class="gallery-item__meta"><h3 class="gallery-item__title">West Village portraits</h3></div></a>
-    <a href="/love_stories/" class="gallery-item reveal"><img src="{% static 'images/l7.jpg' %}" alt=""><div class="gallery-item__overlay"></div><div class="gallery-item__meta"><h3 class="gallery-item__title">Brooklyn Bridge love story</h3></div></a>
-    <a href="/events/" class="gallery-item reveal"><img src="{% static 'images/e1.jpg' %}" alt=""><div class="gallery-item__overlay"></div><div class="gallery-item__meta"><h3 class="gallery-item__title">A downtown wedding day</h3></div></a>
-    <a href="/portraits/" class="gallery-item reveal"><img src="{% static 'images/p5.jpg' %}" alt=""><div class="gallery-item__overlay"></div><div class="gallery-item__meta"><h3 class="gallery-item__title">SoHo editorial</h3></div></a>
-    {% endfor %}
-  </div>
-</section>
 
 <section class="story-section">
   <div class="story-section__inner">
@@ -684,6 +655,56 @@
   </div>
 </section>
 
+
+<section id="portfolio" class="gallery-section">
+  <div class="gallery-header reveal">
+    <span class="gallery-header__label">Portfolio</span>
+    <span class="gallery-header__index">01</span>
+  </div>
+  <div class="gallery-grid">
+    {% for gallery in portfolio_galleries|slice:":6" %}
+    <a href="{% url 'client_gallery' gallery.slug %}" class="gallery-item reveal">
+      <img src="{% if gallery.cover %}{{ gallery.cover.url }}{% elif gallery.love_stories_cover %}{{ gallery.love_stories_cover.url }}{% else %}{% static 'images/l1.jpg' %}{% endif %}" alt="{{ gallery.title }}">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta">
+        <h3 class="gallery-item__title">{{ gallery.title }}</h3>
+      </div>
+    </a>
+    {% empty %}
+    <a href="/love_stories/" class="gallery-item reveal">
+      <img src="{% static 'images/l1.jpg' %}" alt="">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta"><h3 class="gallery-item__title">Love story</h3></div>
+    </a>
+    <a href="/love_stories/" class="gallery-item reveal">
+      <img src="{% static 'images/l2.jpg' %}" alt="">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta"><h3 class="gallery-item__title">Central Park</h3></div>
+    </a>
+    <a href="/love_stories/" class="gallery-item reveal">
+      <img src="{% static 'images/l3.jpg' %}" alt="">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta"><h3 class="gallery-item__title">Brooklyn</h3></div>
+    </a>
+    <a href="/love_stories/" class="gallery-item reveal">
+      <img src="{% static 'images/l4.jpg' %}" alt="">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta"><h3 class="gallery-item__title">The Met</h3></div>
+    </a>
+    <a href="/love_stories/" class="gallery-item reveal">
+      <img src="{% static 'images/l7.jpg' %}" alt="">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta"><h3 class="gallery-item__title">West Village</h3></div>
+    </a>
+    <a href="/love_stories/" class="gallery-item reveal">
+      <img src="{% static 'images/p3.jpg' %}" alt="">
+      <div class="gallery-item__overlay"></div>
+      <div class="gallery-item__meta"><h3 class="gallery-item__title">SoHo</h3></div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
 <section id="packages" class="packages-section">
   <div class="gallery-header reveal" style="max-width:1100px;margin:0 auto 0;">
     <span class="gallery-header__label">Packages</span>
@@ -691,7 +712,7 @@
   </div>
   <div class="packages-grid">
     <article class="package-card reveal">
-      <img src="{% static 'images/l3.jpg' %}" alt="Love story">
+      <img src="{% if price_photos.0 %}{% if price_photos.0.image %}{{ price_photos.0.image.url }}{% elif price_photos.0.file %}{{ price_photos.0.file.url }}{% elif price_photos.0.photo %}{{ price_photos.0.photo.url }}{% else %}{{ price_photos.0.url }}{% endif %}{% else %}{% static 'images/l3.jpg' %}{% endif %}" alt="Love story">
       <div class="package-card__body">
         <h3>Love story / Couple</h3>
         <ul>
@@ -703,7 +724,7 @@
       </div>
     </article>
     <article class="package-card reveal">
-      <img src="{% static 'images/w1.jpg' %}" alt="Wedding">
+      <img src="{% if price_photos.1 %}{% if price_photos.1.image %}{{ price_photos.1.image.url }}{% elif price_photos.1.file %}{{ price_photos.1.file.url }}{% elif price_photos.1.photo %}{{ price_photos.1.photo.url }}{% else %}{{ price_photos.1.url }}{% endif %}{% else %}{% static 'images/w1.jpg' %}{% endif %}" alt="Wedding">
       <div class="package-card__body">
         <h3>Wedding</h3>
         <ul>
@@ -715,7 +736,7 @@
       </div>
     </article>
     <article class="package-card reveal">
-      <img src="{% static 'images/p4.jpg' %}" alt="Portrait">
+      <img src="{% if price_photos.2 %}{% if price_photos.2.image %}{{ price_photos.2.image.url }}{% elif price_photos.2.file %}{{ price_photos.2.file.url }}{% elif price_photos.2.photo %}{{ price_photos.2.photo.url }}{% else %}{{ price_photos.2.url }}{% endif %}{% else %}{% static 'images/p4.jpg' %}{% endif %}" alt="Portrait">
       <div class="package-card__body">
         <h3>Portrait / Family / Event</h3>
         <ul>
@@ -728,6 +749,7 @@
     </article>
   </div>
 </section>
+
 
 <section id="inquiry" class="inquiry-section">
   <div class="inquiry-wrap">
