@@ -13,42 +13,16 @@ from .forms import GalleryForm, PhotoUploadForm
 from .models import Album, Photo, ShowcasePhoto, Client
 
 
+
 def _home_gallery_photos(gallery, limit=None):
-    """Keep the same order as in the gallery layout / picker."""
+    """Same order as on the gallery edit page."""
     if not gallery:
         return []
 
-    photos = []
-    seen = set()
-
-    slots = getattr(gallery, 'layout_slots', None) or []
-    slot_ids = []
-    for item in slots:
-        if item in (None, '', 0):
-            continue
-        if isinstance(item, dict):
-            try:
-                pid = int(item.get('id') or 0)
-            except (TypeError, ValueError):
-                pid = 0
-        else:
-            try:
-                pid = int(item)
-            except (TypeError, ValueError):
-                pid = 0
-        if pid and pid not in seen:
-            seen.add(pid)
-            slot_ids.append(pid)
-
-    if slot_ids:
-        by_id = {p.id: p for p in Photo.objects.filter(id__in=slot_ids)}
-        photos = [by_id[pid] for pid in slot_ids if pid in by_id and by_id[pid].image]
-
-    if not photos:
-        items = list(
-            gallery.showcase_items.select_related('photo').order_by('order', 'id')
-        )
-        photos = [item.photo for item in items if item.photo_id and item.photo.image]
+    items = list(
+        gallery.showcase_items.select_related('photo').order_by('order', 'id')
+    )
+    photos = [item.photo for item in items if item.photo_id and getattr(item.photo, 'image', None)]
 
     if not photos:
         photos = [p for p in gallery.photos.all().order_by('order', 'id') if p.image]
@@ -106,7 +80,7 @@ def home(request):
     return render(request, 'home.html', {
         'form_sent': form_sent,
         'carousel_photos': _home_gallery_photos(carousel_gallery, 40),
-        'price_photos': _home_gallery_photos(prices_gallery, 3),
+        'price_photos': _home_gallery_photos(prices_gallery, 4),
         'portfolio_galleries': portfolio_galleries,
     })
 
