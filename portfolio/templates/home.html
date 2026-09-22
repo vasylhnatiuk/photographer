@@ -383,13 +383,15 @@
 
   .gallery-item__meta {
     position: absolute;
-    bottom: 0;
-    left: 0;
     right: 0;
-    padding: 2.2rem 2rem;
+    bottom: 0;
+    left: auto;
+    padding: 2rem 1.6rem 1.6rem;
     display: flex;
+    flex-direction: column;
     align-items: flex-end;
-    justify-content: space-between;
+    text-align: right;
+    max-width: 85%;
   }
 
   .gallery-item__title {
@@ -398,17 +400,15 @@
     font-weight: 300;
     color: #f5f2ee;
     letter-spacing: 0.02em;
+    margin: 0;
   }
   .gallery-item__desc {
-    margin: .35rem 0 0;
-    font-size: .78rem;
+    margin: .4rem 0 0;
+    font-size: .8rem;
     font-weight: 300;
-    line-height: 1.45;
-    color: rgba(245,242,238,.72);
-    max-width: 28rem;
+    line-height: 1.4;
+    color: rgba(245,242,238,.78);
   }
-  .gallery-item__meta { flex-wrap: wrap; }
-  .gallery-item__text { flex: 1; min-width: 0; }
 
   .gallery-item__arrow {
     width: 36px;
