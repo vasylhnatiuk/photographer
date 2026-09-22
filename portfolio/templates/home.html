@@ -664,7 +664,7 @@
   <div class="gallery-grid">
     {% for gallery in portfolio_galleries|slice:":6" %}
     <a href="{% url 'client_gallery' gallery.slug %}" class="gallery-item reveal">
-      <img src="{% if gallery.cover %}{{ gallery.cover.url }}{% elif gallery.love_stories_cover %}{{ gallery.love_stories_cover.url }}{% else %}{% static 'images/l1.jpg' %}{% endif %}" alt="{{ gallery.title }}">
+      <img src="{% elif gallery.love_stories_cover %}{{ gallery.love_stories_cover.url }}{% else %}{% static 'images/l1.jpg' %}{% endif %}" alt="{{ gallery.title }}">
       <div class="gallery-item__overlay"></div>
       <div class="gallery-item__meta">
         <h3 class="gallery-item__title">{{ gallery.title }}</h3>
