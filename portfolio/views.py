@@ -14,15 +14,45 @@ from .models import Album, Photo, ShowcasePhoto, Client
 
 
 def _home_gallery_photos(gallery, limit=None):
-    """Photos from a showcase gallery (picked items), else its own uploads."""
+    """Keep the same order as in the gallery layout / picker."""
     if not gallery:
         return []
-    items = list(
-        gallery.showcase_items.select_related('photo').order_by('order', 'id')
-    )
-    photos = [item.photo for item in items if item.photo_id and item.photo.image]
+
+    photos = []
+    seen = set()
+
+    slots = getattr(gallery, 'layout_slots', None) or []
+    slot_ids = []
+    for item in slots:
+        if item in (None, '', 0):
+            continue
+        if isinstance(item, dict):
+            try:
+                pid = int(item.get('id') or 0)
+            except (TypeError, ValueError):
+                pid = 0
+        else:
+            try:
+                pid = int(item)
+            except (TypeError, ValueError):
+                pid = 0
+        if pid and pid not in seen:
+            seen.add(pid)
+            slot_ids.append(pid)
+
+    if slot_ids:
+        by_id = {p.id: p for p in Photo.objects.filter(id__in=slot_ids)}
+        photos = [by_id[pid] for pid in slot_ids if pid in by_id and by_id[pid].image]
+
     if not photos:
-        photos = [p for p in gallery.photos.all() if p.image]
+        items = list(
+            gallery.showcase_items.select_related('photo').order_by('order', 'id')
+        )
+        photos = [item.photo for item in items if item.photo_id and item.photo.image]
+
+    if not photos:
+        photos = [p for p in gallery.photos.all().order_by('order', 'id') if p.image]
+
     if limit is not None:
         return photos[:limit]
     return photos
@@ -64,7 +94,7 @@ def home(request):
         Album.objects.filter(title__iexact='Prices').first()
         or Album.objects.filter(slug__iexact='prices').first()
     )
-    print(carousel_gallery)
+
     portfolio_galleries = (
         Album.objects.filter(
             showcase_category=Album.LOVE_STORIES,
@@ -72,13 +102,14 @@ def home(request):
         )
         .order_by('display_order', '-created_at')[:6]
     )
-    print(111111111111111)
+
     return render(request, 'home.html', {
         'form_sent': form_sent,
         'carousel_photos': _home_gallery_photos(carousel_gallery, 40),
         'price_photos': _home_gallery_photos(prices_gallery, 3),
         'portfolio_galleries': portfolio_galleries,
     })
+
 
 
 def weddings(request):
