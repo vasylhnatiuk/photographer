@@ -349,11 +349,13 @@
     overflow: hidden;
     display: block;
     text-decoration: none;
-    height: 620px;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    min-height: 520px;
   }
 
   @media (max-width: 767px) {
-    .gallery-item { height: 480px; }
+    .gallery-item { height: auto; min-height: 0; aspect-ratio: 3 / 4; }
   }
 
   .gallery-item img {
@@ -613,7 +615,7 @@
     .gallery-section { padding: 2.4rem 1.15rem 3.2rem; }
     .gallery-header { margin-bottom: 1.4rem; padding-bottom: 0.9rem; }
     .gallery-header__index { font-size: 2.4rem; }
-    .gallery-item { height: 420px; }
+    .gallery-item { height: auto; min-height: 0; aspect-ratio: 3 / 4; }
 
     .packages-section { padding: 2.4rem 1.15rem 3.2rem; }
     .package-card img { height: 240px; }
