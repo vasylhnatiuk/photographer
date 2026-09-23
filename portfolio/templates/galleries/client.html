@@ -22,11 +22,16 @@
 .scroll i { display: block; width: 1px; height: 42px; background: rgba(255,255,255,.65); margin: 8px auto 0; }
 .actions { display: flex; justify-content: center; gap: 28px; padding: 28px 20px 8px; flex-wrap: wrap; }
 .actions a { color: #111; text-decoration: none; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; border-bottom: 1px solid #111; padding-bottom: 3px; }
-.masonry-wrap { max-width: 1800px; margin: auto; padding: 18px 22px 110px; }
-.masonry { columns: 4 240px; column-gap: 5px; }
-.masonry.is-pending { visibility: hidden; }
-.masonry .photo { display: block; break-inside: avoid; margin: 0 0 5px; overflow: hidden; cursor: zoom-in; }
-.masonry .photo img { width: 100%; height: auto; display: block; }
+.g-board { max-width: 1800px; margin: 0 auto; padding: 18px 10px 110px; }
+.g-row { display: grid; gap: 5px; margin-bottom: 5px; }
+.g-row.is-trio { grid-template-columns: 1fr 1fr 1fr; }
+.g-row.is-pair { grid-template-columns: 1fr 1fr; }
+.g-row.is-big { grid-template-columns: 1fr; }
+.g-cell { overflow: hidden; cursor: zoom-in; background: #111; }
+.g-row.is-trio .g-cell { aspect-ratio: 3 / 4; }
+.g-row.is-pair .g-cell { aspect-ratio: 4 / 5; }
+.g-row.is-big .g-cell { aspect-ratio: 16 / 9; }
+.g-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .end { text-align: center; padding: 40px 20px 120px; }
 .end-name { font-family: "Cormorant Garamond", Georgia, serif; font-size: 34px; }
 .end-sub { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: #888; margin-top: 8px; }
@@ -43,13 +48,11 @@
 @keyframes fade { to { opacity: 1; } }
 @keyframes heroIn { to { opacity: 1; transform: scale(1); } }
 @keyframes zoom { to { transform: scale(1.045); } }
-@media (max-width: 1100px) {
-  .masonry { columns: 3 220px; }
-}
 @media (max-width: 700px) {
   .top { padding: 0 18px; }
   .hero-title-xl { font-size: clamp(50px, 15vw, 78px); }
-  .masonry { columns: 2 140px; column-gap: 4px; }
+  .g-board { padding: 12px 6px 80px; }
+  .g-row { gap: 4px; margin-bottom: 4px; }
 }
 </style>
 
@@ -104,50 +107,23 @@
 {% endif %}
 
 {% if not gallery_locked %}
-
-{% if gallery.is_showcase %}
-<section class="max-w-6xl mx-auto px-4 py-16 space-y-10">
+<section class="g-board">
   {% for row in rows %}
-    {% if row.kind == 'trio' %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {% for photo in row.photos %}
-          <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
-            <img src="{{ photo.image.url }}" alt="" class="h-[480px] w-full object-cover group-hover:scale-105 transition duration-700" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
-          </div>
-        {% endfor %}
+  <div class="g-row is-{{ row.kind }}">
+    {% for photo in row.cells %}
+      {% if photo %}
+      <div class="g-cell" onclick="openLightbox({{ photo.idx }})">
+        <img src="{{ photo.image.url }}" alt=""
+          {% if forloop.parentloop.counter > 2 %}loading="lazy"{% endif %}
+          style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
       </div>
-    {% elif row.kind == 'pair' %}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {% for photo in row.photos %}
-          <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
-            <img src="{{ photo.image.url }}" alt="" class="h-[480px] md:h-[540px] w-full object-cover group-hover:scale-105 transition duration-700" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      {% for photo in row.photos %}
-        <div onclick="openLightbox({{ photo.idx }})" class="cursor-pointer overflow-hidden group">
-          <img src="{{ photo.image.url }}" alt="" class="h-[400px] md:h-[600px] w-full object-cover transition duration-700" style="object-position: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%; transform: scale(calc({{ photo.focus_z|default:100 }}/100)); transform-origin: {{ photo.focus_x|default:50 }}% {{ photo.focus_y|default:50 }}%;">
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% empty %}
-    <p class="text-center text-gray-400">No photos in this gallery yet.</p>
-  {% endfor %}
-</section>
-{% else %}
-<main class="masonry-wrap">
-  <div class="masonry is-pending" id="client-masonry">
-    {% for photo in photos %}
-      <a class="photo" href="{{ photo.image.url }}" onclick="openLightbox({{ photo.idx }}); return false;">
-        <img src="{{ photo.image.url }}" alt="" {% if forloop.counter > 6 %}loading="lazy"{% endif %}>
-      </a>
-    {% empty %}
-      <p>No photos in this gallery yet.</p>
+      {% endif %}
     {% endfor %}
   </div>
-</main>
-{% endif %}
+  {% empty %}
+  <p style="text-align:center;color:#888">No photos in this gallery yet.</p>
+  {% endfor %}
+</section>
 {% endif %}
 
 {% if not gallery_locked %}
@@ -192,19 +168,6 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') prevImage();
 });
 lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-(function () {
-  const root = document.getElementById('client-masonry');
-  if (!root) return;
-  const imgs = [...root.querySelectorAll('img')].slice(0, 8);
-  const ready = imgs.map((img) => img.complete ? Promise.resolve() : new Promise((done) => {
-    img.addEventListener('load', done, { once: true });
-    img.addEventListener('error', done, { once: true });
-  }));
-  Promise.all(ready).then(() => {
-    requestAnimationFrame(() => root.classList.remove('is-pending'));
-  });
-  setTimeout(() => root.classList.remove('is-pending'), 1800);
-})();
 </script>
 {% endif %}
 {% endblock %}
