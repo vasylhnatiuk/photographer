@@ -3,6 +3,8 @@ import json
 import os
 import zipfile
 
+import requests
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
@@ -85,7 +87,188 @@ def home(request):
     })
 
 
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import render, redirect
 
+# твої існуючі imports залишаються
+
+
+def q(request):
+    if request.method == 'POST' and request.POST.get('questionnaire') == '1':
+
+        # -----------------------------
+        # GET ALL FORM DATA
+        # -----------------------------
+
+        names = (request.POST.get('names') or '').strip()
+        email = (request.POST.get('email') or '').strip()
+        instagram = (request.POST.get('instagram') or '').strip()
+        phone = (request.POST.get('phone') or '').strip()
+
+        shoot_type = (request.POST.get('shoot_type') or '').strip()
+        shoot_date = (request.POST.get('date') or '').strip()
+        shoot_time = (request.POST.get('time') or '').strip()
+        duration = (request.POST.get('duration') or '').strip()
+        location = (request.POST.get('location') or '').strip()
+
+        vision = (request.POST.get('vision') or '').strip()
+        pinterest = (request.POST.get('pinterest') or '').strip()
+        specific_photos = (request.POST.get('specific_photos') or '').strip()
+
+        celebration = (request.POST.get('celebration') or '').strip()
+        details = (request.POST.get('details') or '').strip()
+
+
+        # -----------------------------
+        # SAVE TO DATABASE
+        # -----------------------------
+
+        message = '\n'.join(filter(None, [
+            f'Names & relationship: {names}',
+            f'Email: {email}',
+            f'Instagram: {instagram}',
+            f'Phone: {phone}',
+            '',
+            f'Shoot type: {shoot_type}',
+            f'Shoot date: {shoot_date}',
+            f'Shoot time: {shoot_time}',
+            f'Duration: {duration}',
+            f'Location: {location}',
+            '',
+            f'Vision / style:\n{vision}' if vision else '',
+            f'Pinterest / inspiration: {pinterest}' if pinterest else '',
+            f'Specific photos:\n{specific_photos}' if specific_photos else '',
+            '',
+            f'What are they celebrating:\n{celebration}' if celebration else '',
+            f'Anything else:\n{details}' if details else '',
+        ]))
+
+        Client.objects.create(
+            name=names or 'Questionnaire',
+            email=email or 'inquiry@vas.photo.nyc',
+            phone=phone,
+            message=message,
+        )
+
+
+        # -----------------------------
+        # EMAIL TO YOU
+        # -----------------------------
+
+        email_subject = f'New Client Questionnaire — {names or "New Client"}'
+
+        email_message = f"""
+NEW CLIENT QUESTIONNAIRE
+=========================
+
+NAMES & RELATIONSHIP
+{names or "Not provided"}
+
+
+CONTACT INFORMATION
+-------------------
+Email: {email or "Not provided"}
+Instagram: {instagram or "Not provided"}
+Phone: {phone or "Not provided"}
+
+
+SESSION DETAILS
+---------------
+Shoot type: {shoot_type or "Not provided"}
+Date: {shoot_date or "Not provided"}
+Time: {shoot_time or "Not provided"}
+Duration: {duration or "Not provided"}
+Location: {location or "Not provided"}
+
+
+VISION & STYLE
+--------------
+{vision or "Not provided"}
+
+
+PINTEREST / INSPIRATION
+-----------------------
+{pinterest or "Not provided"}
+
+
+SPECIFIC PHOTOS
+---------------
+{specific_photos or "Not provided"}
+
+
+A LITTLE ABOUT YOU
+------------------
+What are you celebrating?
+
+{celebration or "Not provided"}
+
+
+Anything else you'd like to add?
+
+{details or "Not provided"}
+
+
+=========================
+Submitted through Vas Photo NYC questionnaire.
+"""
+
+
+        # -----------------------------
+        # SEND EMAIL
+        # -----------------------------
+
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": "onboarding@resend.dev",
+                "to": [settings.QUESTIONNAIRE_EMAIL],
+                "subject": f"New Client Questionnaire - {names or 'New Client'}",
+                "text": email_message,
+                "reply_to": email if email else None,
+            },
+            timeout=20,
+        )
+
+        if not response.ok:
+            raise Exception(
+                f"Resend error {response.status_code}: {response.text}"
+            )
+
+        return render(request, 'questionnaire_thank_you.html')
+
+
+    # -----------------------------
+    # NORMAL PAGE
+    # -----------------------------
+
+    carousel_gallery = (
+        Album.objects.filter(title__iexact='Carousel').first()
+        or Album.objects.filter(slug__iexact='carousel').first()
+    )
+
+    prices_gallery = (
+        Album.objects.filter(title__iexact='Prices').first()
+        or Album.objects.filter(slug__iexact='prices').first()
+    )
+
+    portfolio_galleries = (
+        Album.objects.filter(
+            showcase_category=Album.LOVE_STORIES,
+            is_private=False,
+        )
+        .order_by('display_order', '-created_at')[:6]
+    )
+
+    return render(request, 'q.html', {
+        'carousel_photos': _home_gallery_photos(carousel_gallery, 40),
+        'price_photos': _home_gallery_photos(prices_gallery, 4),
+        'portfolio_galleries': portfolio_galleries,
+    })
 def weddings(request):
     """
     Public gallery page.

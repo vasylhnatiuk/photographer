@@ -176,3 +176,18 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'vas.photo.nyc@gmail.com'
+EMAIL_HOST_PASSWORD = 'ТВІЙ_APP_PASSWORD'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
+QUESTIONNAIRE_EMAIL = 'vas.photo.nyc@gmail.com'
