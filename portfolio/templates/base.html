@@ -229,6 +229,8 @@ body.hide-main-nav #mobile-menu { display: none !important; }
   </div>
 </a>
 
+
+
 {% endblock %}
 
 <!-- ── HEADER ── -->
@@ -384,14 +386,11 @@ body.hide-main-nav #mobile-menu { display: none !important; }
 </section>
 {% endblock %}
 <script>
-  const date = new Date();
-  date.setMonth(date.getMonth() + 1);
+  const month = new Date().toLocaleString('en-US', {
+    month: 'long'
+  });
 
-  document.getElementById('discount-month').textContent =
-    date.toLocaleString('en-US', { month: 'long' });
-
-  document.getElementById('discount-year').textContent =
-    ' ' + date.getFullYear();
+  document.getElementById('discount-month').textContent = month;
 </script>
 </body>
 </html>
