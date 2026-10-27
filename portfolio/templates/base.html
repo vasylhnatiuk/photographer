@@ -220,13 +220,15 @@ body.hide-main-nav #mobile-menu { display: none !important; }
 
   <div class="discount-popup__text">
     <p class="discount-popup__title">
-      Limited-time: up to 30% off when booking in September
+      Limited-time: up to 30% off when booking in
+      <span id="discount-month"></span>
     </p>
     <p class="discount-popup__sub">
       Book your session now
     </p>
   </div>
 </a>
+
 {% endblock %}
 
 <!-- ── HEADER ── -->
@@ -381,6 +383,15 @@ body.hide-main-nav #mobile-menu { display: none !important; }
 
 </section>
 {% endblock %}
+<script>
+  const date = new Date();
+  date.setMonth(date.getMonth() + 1);
 
+  document.getElementById('discount-month').textContent =
+    date.toLocaleString('en-US', { month: 'long' });
+
+  document.getElementById('discount-year').textContent =
+    ' ' + date.getFullYear();
+</script>
 </body>
 </html>

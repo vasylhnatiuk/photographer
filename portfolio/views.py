@@ -60,6 +60,45 @@ def home(request):
             phone=phone,
             message=details,
         )
+
+        email_message = f"""
+        NEW WEBSITE INQUIRY
+        ===================
+
+        Name: {name or "Not provided"}
+        Phone: {phone or "Not provided"}
+        Instagram: {instagram or "Not provided"}
+
+        SHOOT DETAILS
+        -------------
+        {details or "Not provided"}
+
+        Submitted through the Vas Photo NYC homepage.
+        """
+
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": "Vas Photo NYC <onboarding@resend.dev>",
+                "to": [settings.QUESTIONNAIRE_EMAIL],
+                "subject": f"New Website Inquiry — {name or 'New Client'}",
+                "text": email_message,
+                "reply_to": (
+                    instagram if instagram.startswith("mailto:") else None
+                ),
+            },
+            timeout=20,
+        )
+
+        if not response.ok:
+            raise Exception(
+                f"Resend error {response.status_code}: {response.text}"
+            )
+
         form_sent = True
 
     carousel_gallery = (
